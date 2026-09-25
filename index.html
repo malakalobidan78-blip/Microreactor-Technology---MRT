@@ -1,0 +1,2945 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#05080b">
+<meta name="description" content="Interactive scientific visualization of Microreactor Technology">
+<title>Microreactor Technology — MRT</title>
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+:root{
+  --bg:#05080b;
+  --bg2:#080d12;
+  --panel:rgba(13,20,27,.72);
+  --line:rgba(255,255,255,.10);
+  --white:#f4f7f8;
+  --muted:#81909b;
+  --cyan:#63e6ff;
+  --green:#78e6a1;
+  --amber:#ffbd6b;
+  --red:#ff7d75;
+  --max:1400px;
+  --ease:cubic-bezier(.16,1,.3,1);
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+html{
+  scroll-behavior:smooth;
+  background:var(--bg);
+}
+
+body{
+  background:
+    radial-gradient(circle at 75% 10%,rgba(61,220,255,.07),transparent 28%),
+    radial-gradient(circle at 15% 45%,rgba(92,255,170,.035),transparent 25%),
+    var(--bg);
+  color:var(--white);
+  font-family:Inter,sans-serif;
+  overflow-x:hidden;
+}
+
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:999;
+  opacity:.025;
+  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit}
+section{position:relative}
+
+.container{
+  width:min(var(--max),calc(100% - 80px));
+  margin:auto;
+}
+
+.mono{
+  font-family:"DM Mono",monospace;
+  letter-spacing:.08em;
+}
+
+.eyebrow{
+  color:var(--cyan);
+  font:500 11px "DM Mono",monospace;
+  letter-spacing:.22em;
+  text-transform:uppercase;
+  display:flex;
+  align-items:center;
+  gap:12px;
+}
+
+.eyebrow:before{
+  content:"";
+  width:26px;
+  height:1px;
+  background:currentColor;
+}
+
+h2{
+  font-size:clamp(42px,6vw,90px);
+  line-height:.92;
+  letter-spacing:-.065em;
+  font-weight:700;
+  margin-top:22px;
+}
+
+h2 span{
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.45);
+}
+
+.section-copy{
+  max-width:580px;
+  margin-top:28px;
+  color:#9aa8b1;
+  font-size:16px;
+  line-height:1.8;
+}
+
+header{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  z-index:100;
+  padding:20px 0;
+  transition:.5s var(--ease);
+}
+
+header.scrolled{
+  background:rgba(5,8,11,.78);
+  backdrop-filter:blur(18px);
+  border-bottom:1px solid var(--line);
+}
+
+.nav{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+}
+
+.logo{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  font-weight:800;
+  letter-spacing:.08em;
+  font-size:13px;
+}
+
+.logo-mark{
+  width:27px;
+  height:27px;
+  border:1px solid var(--cyan);
+  position:relative;
+  transform:rotate(45deg);
+}
+
+.logo-mark:after{
+  content:"";
+  position:absolute;
+  inset:5px;
+  border:1px solid var(--green);
+}
+
+.nav-links{
+  display:flex;
+  gap:28px;
+  color:#89969e;
+  font-size:11px;
+  font-family:"DM Mono",monospace;
+}
+
+.nav-links a:hover{color:white}
+
+.nav-right{
+  display:flex;
+  align-items:center;
+  gap:14px;
+}
+
+.lang,
+.menu-btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.035);
+  padding:9px 13px;
+  cursor:pointer;
+  font-size:10px;
+  font-family:"DM Mono",monospace;
+}
+
+.hero{
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+
+.hero-grid{
+  position:absolute;
+  inset:0;
+  opacity:.22;
+  background-image:
+    linear-gradient(rgba(100,230,255,.06) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(100,230,255,.06) 1px,transparent 1px);
+  background-size:80px 80px;
+  mask-image:linear-gradient(to bottom,black,transparent 85%);
+}
+
+.hero-content{
+  position:relative;
+  z-index:4;
+  padding-top:90px;
+  pointer-events:none;
+}
+
+.hero-content>*{pointer-events:auto}
+
+.hero-title{
+  font-size:clamp(65px,10vw,155px);
+  line-height:.78;
+  letter-spacing:-.085em;
+  font-weight:800;
+  max-width:800px;
+  margin-top:30px;
+}
+
+.hero-title .outline{
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.65);
+}
+
+.hero-sub{
+  margin-top:35px;
+  max-width:520px;
+  color:#8998a2;
+  line-height:1.8;
+  font-size:15px;
+}
+
+.hero-actions{
+  margin-top:34px;
+  display:flex;
+  gap:12px;
+}
+
+.btn{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.04);
+  padding:15px 20px;
+  cursor:pointer;
+  font-size:10px;
+  letter-spacing:.12em;
+  font-family:"DM Mono",monospace;
+  transition:.35s var(--ease);
+}
+
+.btn.primary{
+  background:var(--white);
+  color:#05080b;
+}
+
+.btn:hover{
+  transform:translateY(-3px);
+  border-color:var(--cyan);
+}
+
+.hero-chip{
+  position:absolute;
+  width:min(54vw,760px);
+  aspect-ratio:1.55;
+  right:2%;
+  top:50%;
+  transform:translateY(-50%) perspective(1000px) rotateX(55deg) rotateZ(-9deg);
+  z-index:2;
+  filter:drop-shadow(0 0 50px rgba(75,220,255,.08));
+}
+
+.chip-body{
+  position:absolute;
+  inset:0;
+  border:1px solid rgba(180,240,255,.45);
+  border-radius:18px;
+  background:
+    linear-gradient(135deg,rgba(160,240,255,.09),rgba(255,255,255,.015)),
+    rgba(255,255,255,.018);
+  box-shadow:
+    inset 0 0 60px rgba(100,220,255,.04),
+    0 40px 100px rgba(0,0,0,.45);
+  backdrop-filter:blur(5px);
+}
+
+.chip-body:before{
+  content:"";
+  position:absolute;
+  inset:9px;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+}
+
+.chip-label{
+  position:absolute;
+  top:28px;
+  left:35px;
+  font:9px "DM Mono";
+  color:#667983;
+  letter-spacing:.18em;
+}
+
+.port{
+  position:absolute;
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.35);
+  background:#071016;
+  box-shadow:inset 0 0 15px rgba(100,220,255,.15);
+}
+
+.port.a{left:2%;top:44%}
+.port.b{left:2%;top:62%}
+.port.out{right:2%;top:53%}
+
+.channels{
+  position:absolute;
+  inset:14%;
+}
+
+.channel{
+  position:absolute;
+  height:3px;
+  background:linear-gradient(90deg,var(--cyan),rgba(99,230,255,.08));
+  box-shadow:0 0 12px rgba(99,230,255,.55);
+  border-radius:100px;
+}
+
+.c1{width:33%;left:-10%;top:30%}
+.c2{width:33%;left:-10%;top:65%;background:linear-gradient(90deg,var(--green),rgba(120,230,161,.05));box-shadow:0 0 12px rgba(120,230,161,.5)}
+.c3{width:26%;left:21%;top:30%;transform:rotate(35deg);transform-origin:left}
+.c4{width:26%;left:21%;top:65%;transform:rotate(-35deg);transform-origin:left}
+.c5{width:43%;left:39%;top:48%}
+
+.reaction-zone{
+  position:absolute;
+  left:45%;
+  top:38%;
+  width:15%;
+  aspect-ratio:1;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(255,189,107,.25),transparent 65%);
+  box-shadow:0 0 60px rgba(255,189,107,.12);
+  animation:pulse 2.5s infinite;
+}
+
+@keyframes pulse{
+  0%,100%{transform:scale(.85);opacity:.5}
+  50%{transform:scale(1.15);opacity:1}
+}
+
+.particle{
+  position:absolute;
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 10px currentColor;
+  z-index:5;
+}
+
+.particle.green{background:var(--green);color:var(--green)}
+
+.p1{left:8%;top:30%;animation:flow1 3.2s linear infinite}
+.p2{left:5%;top:65%;animation:flow2 3.7s linear infinite}
+.p3{left:18%;top:30%;animation:flow1 3.2s 1s linear infinite}
+.p4{left:12%;top:65%;animation:flow2 3.7s 1.4s linear infinite}
+
+@keyframes flow1{
+  0%{transform:translate(0,0);opacity:0}
+  10%{opacity:1}
+  70%{transform:translate(410px,80px)}
+  100%{transform:translate(650px,30px);opacity:0}
+}
+@keyframes flow2{
+  0%{transform:translate(0,0);opacity:0}
+  10%{opacity:1}
+  70%{transform:translate(410px,-80px)}
+  100%{transform:translate(650px,-25px);opacity:0}
+}
+
+.floating-label{
+  position:absolute;
+  font:9px "DM Mono";
+  color:#82949e;
+  letter-spacing:.1em;
+}
+
+.fl1{right:4%;top:39%}
+.fl2{left:17%;top:24%}
+.fl3{left:53%;top:67%;color:var(--amber)}
+
+.scroll-indicator{
+  position:absolute;
+  bottom:30px;
+  left:50%;
+  transform:translateX(-50%);
+  color:#586871;
+  font:9px "DM Mono";
+  letter-spacing:.2em;
+}
+
+.scroll-indicator:after{
+  content:"";
+  display:block;
+  width:1px;
+  height:45px;
+  background:linear-gradient(var(--cyan),transparent);
+  margin:12px auto 0;
+}
+
+.flow-section{
+  padding:180px 0;
+  border-top:1px solid var(--line);
+}
+
+.process{
+  margin-top:90px;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+}
+
+.process-card{
+  min-height:260px;
+  border:1px solid var(--line);
+  padding:25px;
+  position:relative;
+  overflow:hidden;
+  background:linear-gradient(145deg,rgba(255,255,255,.035),transparent);
+  transition:.5s var(--ease);
+}
+
+.process-card:hover{
+  transform:translateY(-8px);
+  border-color:rgba(99,230,255,.35);
+}
+
+.process-number{
+  font:10px "DM Mono";
+  color:#53636c;
+}
+
+.process-icon{
+  height:130px;
+  margin:20px 0;
+  position:relative;
+}
+
+.process-name{
+  font-size:12px;
+  font-family:"DM Mono";
+  letter-spacing:.12em;
+}
+
+.process-arrow{
+  position:absolute;
+  right:-17px;
+  top:50%;
+  color:#47545b;
+  z-index:5;
+}
+
+.flow-lines{
+  position:absolute;
+  inset:20px;
+}
+
+.flow-line{
+  height:2px;
+  background:linear-gradient(90deg,var(--cyan),transparent);
+  margin-top:40px;
+  position:relative;
+}
+
+.flow-line:after{
+  content:"";
+  position:absolute;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 15px var(--cyan);
+  animation:lineMove 2s linear infinite;
+}
+
+@keyframes lineMove{
+  from{left:0}
+  to{left:100%}
+}
+
+.chip-section{
+  min-height:100vh;
+  padding:160px 0;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(90,220,255,.045),transparent 35%);
+}
+
+.anatomy-wrap{
+  display:grid;
+  grid-template-columns:1fr 1.4fr;
+  align-items:center;
+  gap:80px;
+  margin-top:90px;
+}
+
+.big-chip{
+  aspect-ratio:1.5;
+  position:relative;
+  border:1px solid rgba(150,230,255,.25);
+  background:rgba(255,255,255,.025);
+  border-radius:20px;
+  box-shadow:0 50px 100px rgba(0,0,0,.35);
+  overflow:hidden;
+}
+
+.big-chip svg{
+  width:100%;
+  height:100%;
+}
+
+.hotspot{
+  position:absolute;
+  width:28px;
+  height:28px;
+  border-radius:50%;
+  border:1px solid var(--cyan);
+  background:#061015;
+  cursor:pointer;
+  z-index:5;
+  transition:.3s;
+}
+
+.hotspot:hover,
+.hotspot.active{
+  background:var(--cyan);
+  color:#000;
+  box-shadow:0 0 30px rgba(99,230,255,.5);
+}
+
+.hs1{left:8%;top:43%}
+.hs2{left:39%;top:30%}
+.hs3{left:51%;top:44%}
+.hs4{left:59%;top:44%}
+.hs5{right:7%;top:44%}
+
+.anatomy-info{
+  min-height:280px;
+  border-left:1px solid var(--line);
+  padding-left:40px;
+}
+
+.anatomy-index{
+  font:12px "DM Mono";
+  color:var(--cyan);
+}
+
+.anatomy-title{
+  font-size:42px;
+  margin:18px 0;
+  letter-spacing:-.04em;
+}
+
+.anatomy-desc{
+  color:#87959e;
+  line-height:1.8;
+  max-width:450px;
+}
+
+.anatomy-tags{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-top:28px;
+}
+
+.tag{
+  border:1px solid var(--line);
+  padding:8px 10px;
+  font:9px "DM Mono";
+  color:#687780;
+}
+
+.zoom-section{
+  min-height:160vh;
+  padding:180px 0;
+  background:#030609;
+}
+
+.zoom-stage{
+  height:70vh;
+  position:sticky;
+  top:15vh;
+  margin-top:80px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  overflow:hidden;
+}
+
+.zoom-visual{
+  width:700px;
+  height:430px;
+  position:relative;
+  transition:transform .15s linear;
+}
+
+.zoom-channel{
+  position:absolute;
+  left:5%;
+  right:5%;
+  top:48%;
+  height:35px;
+  border-radius:30px;
+  border:1px solid rgba(99,230,255,.35);
+  background:rgba(99,230,255,.025);
+  box-shadow:0 0 70px rgba(99,230,255,.06);
+}
+
+.zoom-channel:before,
+.zoom-channel:after{
+  content:"";
+  position:absolute;
+  width:14px;
+  height:14px;
+  border-radius:50%;
+  top:9px;
+}
+
+.zoom-channel:before{
+  left:8%;
+  background:var(--cyan);
+  box-shadow:0 0 15px var(--cyan);
+}
+
+.zoom-channel:after{
+  right:20%;
+  background:var(--green);
+  box-shadow:0 0 15px var(--green);
+}
+
+.diffusion-particles{
+  position:absolute;
+  inset:0;
+}
+
+.diff-p{
+  position:absolute;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--cyan);
+  box-shadow:0 0 12px var(--cyan);
+  transition:.5s;
+}
+
+.diff-p.green{
+  background:var(--green);
+  box-shadow:0 0 12px var(--green);
+}
+
+.zoom-caption{
+  position:absolute;
+  left:0;
+  bottom:0;
+  font:10px "DM Mono";
+  color:#53636b;
+  letter-spacing:.15em;
+}
+
+.zoom-stage-text{
+  position:absolute;
+  top:20px;
+  left:0;
+}
+
+.zoom-stage-text strong{
+  display:block;
+  font-size:clamp(30px,4vw,60px);
+  letter-spacing:-.05em;
+}
+
+.zoom-stage-text span{
+  font:10px "DM Mono";
+  color:var(--cyan);
+}
+
+.diffusion-section{
+  padding:180px 0;
+}
+
+.diffusion-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:80px;
+  align-items:center;
+  margin-top:80px;
+}
+
+.diffusion-box{
+  height:390px;
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(90deg,rgba(99,230,255,.06) 50%,rgba(120,230,161,.06) 50%);
+}
+
+.interface{
+  position:absolute;
+  left:50%;
+  top:0;
+  bottom:0;
+  width:1px;
+  background:rgba(255,255,255,.5);
+  transition:.8s;
+}
+
+.diff-particle{
+  position:absolute;
+  width:7px;
+  height:7px;
+  border-radius:50%;
+  transition:2s ease-in-out;
+}
+
+.diff-particle.a{background:var(--cyan);box-shadow:0 0 12px var(--cyan)}
+.diff-particle.b{background:var(--green);box-shadow:0 0 12px var(--green)}
+
+.concept-label{
+  position:absolute;
+  top:18px;
+  font:9px "DM Mono";
+  color:#7d8b92;
+}
+
+.label-left{left:18px}
+.label-right{right:18px}
+
+.simulator{
+  padding:180px 0;
+  background:#04070a;
+}
+
+.sim-grid{
+  display:grid;
+  grid-template-columns:1.5fr .8fr;
+  gap:25px;
+  margin-top:80px;
+}
+
+.sim-screen{
+  min-height:500px;
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(255,189,107,.07),transparent 25%);
+}
+
+.sim-channel{
+  position:absolute;
+  left:10%;
+  right:10%;
+  top:50%;
+  height:42px;
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:30px;
+}
+
+.sim-zone{
+  position:absolute;
+  left:47%;
+  top:calc(50% - 45px);
+  width:100px;
+  height:130px;
+  background:radial-gradient(circle,rgba(255,189,107,.22),transparent 65%);
+  animation:pulse 2s infinite;
+}
+
+.sim-p{
+  position:absolute;
+  width:9px;
+  height:9px;
+  border-radius:50%;
+}
+
+.sim-panel{
+  border:1px solid var(--line);
+  background:rgba(255,255,255,.025);
+  padding:30px;
+}
+
+.control{
+  margin-bottom:30px;
+}
+
+.control label{
+  display:flex;
+  justify-content:space-between;
+  font:9px "DM Mono";
+  color:#718089;
+  margin-bottom:12px;
+}
+
+input[type=range]{
+  width:100%;
+  accent-color:var(--cyan);
+}
+
+.status{
+  font:11px "DM Mono";
+  color:var(--green);
+  margin-bottom:25px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.status:before{
+  content:"";
+  width:6px;
+  height:6px;
+  border-radius:50%;
+  background:currentColor;
+  box-shadow:0 0 12px currentColor;
+}
+
+.sim-buttons{
+  display:flex;
+  gap:8px;
+}
+
+.sim-buttons button{
+  flex:1;
+}
+
+.metric{
+  border-top:1px solid var(--line);
+  padding:18px 0;
+  display:flex;
+  justify-content:space-between;
+}
+
+.metric span:first-child{
+  color:#65747d;
+  font:9px "DM Mono";
+}
+
+.metric span:last-child{
+  font:12px "DM Mono";
+}
+
+.parameters{
+  padding:150px 0;
+}
+
+.parameter-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:70px;
+}
+
+.parameter{
+  border:1px solid var(--line);
+  padding:30px;
+  min-height:170px;
+  position:relative;
+  background:rgba(255,255,255,.02);
+}
+
+.parameter .value{
+  font-size:36px;
+  margin-top:25px;
+  letter-spacing:-.05em;
+}
+
+.parameter small{
+  color:#5f6e76;
+  font:8px "DM Mono";
+}
+
+.transfer{
+  padding:170px 0;
+}
+
+.transfer-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:80px;
+}
+
+.transfer-card{
+  min-height:420px;
+  border:1px solid var(--line);
+  padding:35px;
+  position:relative;
+  overflow:hidden;
+}
+
+.heat-channel{
+  position:absolute;
+  left:12%;
+  right:12%;
+  top:50%;
+  height:70px;
+  border:1px solid rgba(255,189,107,.3);
+  border-radius:50px;
+  background:rgba(255,189,107,.035);
+}
+
+.heat-wave{
+  position:absolute;
+  width:100px;
+  height:100px;
+  border:1px solid rgba(255,189,107,.25);
+  border-radius:50%;
+  top:calc(50% - 15px);
+  animation:wave 2.5s infinite;
+}
+
+@keyframes wave{
+  from{transform:scale(.3);opacity:1}
+  to{transform:scale(3);opacity:0}
+}
+
+.mass-lines{
+  position:absolute;
+  inset:80px;
+  display:flex;
+  justify-content:space-around;
+  align-items:center;
+}
+
+.mass-line{
+  height:220px;
+  width:1px;
+  background:linear-gradient(transparent,var(--cyan),transparent);
+}
+
+.green-section{
+  padding:180px 0;
+  background:
+    radial-gradient(circle at 80% 40%,rgba(120,230,161,.055),transparent 30%);
+}
+
+.green-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-top:80px;
+}
+
+.green-card{
+  min-height:300px;
+  border:1px solid var(--line);
+  padding:28px;
+  transition:.5s var(--ease);
+}
+
+.green-card:hover{
+  transform:translateY(-10px);
+  border-color:rgba(120,230,161,.35);
+}
+
+.green-num{
+  font:10px "DM Mono";
+  color:var(--green);
+}
+
+.green-card h3{
+  font-size:22px;
+  margin-top:100px;
+  letter-spacing:-.04em;
+}
+
+.green-card p{
+  color:#718089;
+  font-size:12px;
+  line-height:1.7;
+  margin-top:14px;
+}
+
+.compare{
+  padding:180px 0;
+}
+
+.compare-table{
+  margin-top:80px;
+  border:1px solid var(--line);
+}
+
+.compare-row{
+  display:grid;
+  grid-template-columns:1.2fr 1fr 1fr;
+  min-height:90px;
+  border-bottom:1px solid var(--line);
+}
+
+.compare-row:last-child{border-bottom:0}
+
+.compare-row>div{
+  padding:28px;
+  display:flex;
+  align-items:center;
+}
+
+.compare-row>div+div{
+  border-left:1px solid var(--line);
+}
+
+.compare-head{
+  color:#6d7b83;
+  font:9px "DM Mono";
+  letter-spacing:.12em;
+}
+
+.compare-value{
+  font:11px "DM Mono";
+}
+
+.materials{
+  padding:160px 0;
+}
+
+.material-grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:15px;
+  margin-top:80px;
+}
+
+.material{
+  min-height:380px;
+  border:1px solid var(--line);
+  position:relative;
+  overflow:hidden;
+  padding:35px;
+}
+
+.glass-object{
+  width:230px;
+  height:150px;
+  border:1px solid rgba(180,240,255,.35);
+  border-radius:20px;
+  position:absolute;
+  right:30px;
+  bottom:30px;
+  transform:rotate(-15deg);
+  background:linear-gradient(135deg,rgba(255,255,255,.12),rgba(255,255,255,.015));
+  box-shadow:inset 0 0 50px rgba(100,220,255,.04);
+}
+
+.applications{
+  padding:180px 0;
+  overflow:hidden;
+}
+
+.apps{
+  display:flex;
+  gap:12px;
+  margin-top:80px;
+  overflow-x:auto;
+  padding-bottom:20px;
+  scrollbar-width:none;
+}
+
+.apps::-webkit-scrollbar{display:none}
+
+.app{
+  flex:0 0 300px;
+  height:360px;
+  border:1px solid var(--line);
+  padding:28px;
+  position:relative;
+  transition:.5s;
+  overflow:hidden;
+}
+
+.app:hover{
+  border-color:var(--cyan);
+  transform:translateY(-7px);
+}
+
+.app-num{
+  font:9px "DM Mono";
+  color:var(--cyan);
+}
+
+.app h3{
+  position:absolute;
+  left:28px;
+  bottom:80px;
+  font-size:25px;
+  letter-spacing:-.04em;
+}
+
+.app p{
+  position:absolute;
+  left:28px;
+  right:28px;
+  bottom:28px;
+  color:#718089;
+  font-size:11px;
+  line-height:1.6;
+}
+
+.numbering{
+  padding:180px 0;
+  background:#030608;
+}
+
+.modules{
+  margin-top:90px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:15px;
+  min-height:280px;
+}
+
+.module{
+  width:110px;
+  height:75px;
+  border:1px solid rgba(99,230,255,.4);
+  position:relative;
+  opacity:.3;
+  transform:scale(.8);
+  transition:.7s var(--ease);
+}
+
+.module.show{
+  opacity:1;
+  transform:scale(1);
+}
+
+.module:before,
+.module:after{
+  content:"";
+  position:absolute;
+  height:2px;
+  background:var(--cyan);
+  top:50%;
+  width:25px;
+}
+
+.module:before{left:-25px}
+.module:after{right:-25px}
+
+.glossary{
+  padding:170px 0;
+}
+
+.glossary-list{
+  margin-top:70px;
+  border-top:1px solid var(--line);
+}
+
+.term{
+  display:grid;
+  grid-template-columns:70px 1fr auto;
+  align-items:center;
+  min-height:80px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+  transition:.3s;
+}
+
+.term:hover{padding-left:10px}
+
+.term-index{
+  font:9px "DM Mono";
+  color:#53636b;
+}
+
+.term-name{
+  font-size:20px;
+  letter-spacing:-.03em;
+}
+
+.term-arrow{
+  color:var(--cyan);
+}
+
+.term-definition{
+  grid-column:2/4;
+  max-height:0;
+  overflow:hidden;
+  color:#718089;
+  font-size:13px;
+  line-height:1.7;
+  transition:.5s var(--ease);
+}
+
+.term.open .term-definition{
+  max-height:100px;
+  padding:0 0 22px;
+}
+
+.references{
+  padding:150px 0;
+  border-top:1px solid var(--line);
+}
+
+.ref{
+  display:grid;
+  grid-template-columns:60px 1fr;
+  gap:20px;
+  padding:22px 0;
+  border-bottom:1px solid var(--line);
+  color:#87959e;
+  font-size:12px;
+  line-height:1.7;
+}
+
+.ref-num{font:10px "DM Mono";color:var(--cyan)}
+
+footer{
+  min-height:80vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+  border-top:1px solid var(--line);
+}
+
+.footer-chip{
+  width:130px;
+  height:80px;
+  border:1px solid rgba(99,230,255,.4);
+  border-radius:12px;
+  margin:40px auto;
+  transform:rotateX(55deg) rotateZ(-8deg);
+  box-shadow:0 0 70px rgba(99,230,255,.1);
+}
+
+.footer-title{
+  font-size:clamp(50px,9vw,130px);
+  line-height:.85;
+  letter-spacing:-.08em;
+}
+
+.footer-title span{
+  display:block;
+  color:transparent;
+  -webkit-text-stroke:1px rgba(255,255,255,.45);
+}
+
+.reveal{
+  opacity:0;
+  transform:translateY(35px);
+  transition:1s var(--ease);
+}
+
+.reveal.visible{
+  opacity:1;
+  transform:none;
+}
+
+.cursor-light{
+  position:fixed;
+  width:300px;
+  height:300px;
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(99,230,255,.035),transparent 70%);
+  pointer-events:none;
+  z-index:0;
+  transform:translate(-50%,-50%);
+}
+
+.mobile-menu{display:none}
+
+@media(max-width:1000px){
+  .container{width:min(92%,var(--max))}
+  .nav-links{display:none}
+  .mobile-menu{display:block}
+  .hero{min-height:950px}
+  .hero-chip{
+    width:80vw;
+    right:-10%;
+    top:65%;
+  }
+  .hero-content{padding-top:80px}
+  .hero-title{font-size:clamp(58px,13vw,110px)}
+  .process{grid-template-columns:repeat(2,1fr)}
+  .anatomy-wrap,
+  .diffusion-grid,
+  .sim-grid,
+  .transfer-grid,
+  .material-grid{
+    grid-template-columns:1fr;
+  }
+  .parameter-grid,
+  .green-grid{grid-template-columns:repeat(2,1fr)}
+  .anatomy-info{border-left:0;border-top:1px solid var(--line);padding:30px 0}
+}
+
+@media(max-width:600px){
+  .container{width:calc(100% - 36px)}
+  h2{font-size:48px}
+  .hero{min-height:850px}
+  .hero-chip{
+    width:110vw;
+    right:-32%;
+    top:67%;
+    transform:translateY(-50%) perspective(1000px) rotateX(55deg) rotateZ(-9deg) scale(.85);
+  }
+  .hero-title{font-size:61px}
+  .hero-sub{font-size:13px}
+  .hero-actions{flex-direction:column;width:220px}
+  .process{grid-template-columns:1fr}
+  .process-card{min-height:220px}
+  .process-arrow{display:none}
+  .parameter-grid,
+  .green-grid{grid-template-columns:1fr}
+  .zoom-section{min-height:120vh}
+  .zoom-visual{width:95vw;height:300px}
+  .zoom-channel{height:24px}
+  .diffusion-box{height:300px}
+  .compare-row{
+    grid-template-columns:1fr;
+  }
+  .compare-row>div+div{
+    border-left:0;
+    border-top:1px solid var(--line);
+  }
+  .modules{transform:scale(.7)}
+  .term{grid-template-columns:40px 1fr auto}
+}
+</style>
+</head>
+
+<body>
+
+<div class="cursor-light" id="cursorLight"></div>
+
+<header id="header">
+  <div class="container nav">
+
+    <a href="#" class="logo">
+      <div class="logo-mark"></div>
+      MRT / 01
+    </a>
+
+    <nav class="nav-links">
+      <a href="#what">WHAT</a>
+      <a href="#chip">CHIP</a>
+      <a href="#mixing">MIXING</a>
+      <a href="#simulator">SIMULATOR</a>
+      <a href="#applications">APPLICATIONS</a>
+    </nav>
+
+    <div class="nav-right">
+      <button class="lang" id="langBtn">AR / EN</button>
+      <button class="menu-btn mobile-menu" onclick="document.querySelector('.nav-links').classList.toggle('show')">MENU</button>
+    </div>
+
+  </div>
+</header>
+
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <div class="hero-grid"></div>
+
+  <div class="container hero-content">
+
+    <div class="eyebrow reveal">SCIENTIFIC TECHNOLOGY / 01</div>
+
+    <h1 class="hero-title reveal">
+      MICROREACTOR<br>
+      <span class="outline">TECHNOLOGY</span>
+    </h1>
+
+    <p class="hero-sub reveal">
+      Chemistry, Miniaturized.<br>
+      Explore how chemical reactions can be performed inside microscale
+      channels, where rapid mixing, diffusion, heat transfer and precise
+      flow control reshape chemical processing.
+    </p>
+
+    <div class="hero-actions reveal">
+      <a href="#chip" class="btn primary">ENTER THE MICROREACTOR →</a>
+      <a href="#what" class="btn">EXPLORE THE CHIP</a>
+    </div>
+
+  </div>
+
+  <div class="hero-chip" id="heroChip">
+
+    <div class="chip-body">
+
+      <div class="chip-label">MRT / MICROREACTOR CHIP / CONCEPTUAL MODEL</div>
+
+      <div class="port a"></div>
+      <div class="port b"></div>
+      <div class="port out"></div>
+
+      <div class="channels">
+        <div class="channel c1"></div>
+        <div class="channel c2"></div>
+        <div class="channel c3"></div>
+        <div class="channel c4"></div>
+        <div class="channel c5"></div>
+
+        <div class="reaction-zone"></div>
+
+        <div class="particle p1"></div>
+        <div class="particle green p2"></div>
+        <div class="particle p3"></div>
+        <div class="particle green p4"></div>
+      </div>
+
+      <span class="floating-label fl1">OUTLET</span>
+      <span class="floating-label fl2">INLET A / B</span>
+      <span class="floating-label fl3">REACTION ZONE</span>
+
+    </div>
+  </div>
+
+  <div class="scroll-indicator">SCROLL TO EXPLORE</div>
+
+</section>
+
+
+<!-- WHAT IS MRT -->
+
+<section class="flow-section" id="what">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">01 / WHAT IS MRT?</div>
+
+    <h2 class="reveal">
+      A REACTOR.<br>
+      <span>REDUCED TO ITS PATHWAYS.</span>
+    </h2>
+
+    <p class="section-copy reveal">
+      A microreactor is a device containing precisely defined microscale
+      features, commonly much smaller than 1 mm. Fluids travel through
+      engineered channels where mixing and chemical reactions can be
+      controlled at very small scales.
+    </p>
+
+    <div class="process">
+
+      <div class="process-card reveal">
+        <span class="process-number">01</span>
+        <div class="process-icon">
+          <div class="flow-lines">
+            <div class="flow-line"></div>
+            <div class="flow-line"></div>
+          </div>
+        </div>
+        <div class="process-name">REACTANTS</div>
+        <span class="process-arrow">→</span>
+      </div>
+
+      <div class="process-card reveal">
+        <span class="process-number">02</span>
+        <div class="process-icon">
+          <div class="flow-lines">
+            <div class="flow-line"></div>
+            <div class="flow-line" style="background:linear-gradient(90deg,var(--green),transparent)"></div>
+          </div>
+        </div>
+        <div class="process-name">MICROCHANNEL</div>
+        <span class="process-arrow">→</span>
+      </div>
+
+      <div class="process-card reveal">
+        <span class="process-number">03</span>
+        <div class="process-icon">
+          <div class="flow-lines">
+            <div class="flow-line"></div>
+            <div class="flow-line"></div>
+          </div>
+        </div>
+        <div class="process-name">MIXING</div>
+        <span class="process-arrow">→</span>
+      </div>
+
+      <div class="process-card reveal">
+        <span class="process-number">04</span>
+        <div class="process-icon">
+          <div class="flow-lines">
+            <div class="flow-line" style="background:linear-gradient(90deg,var(--amber),transparent)"></div>
+          </div>
+        </div>
+        <div class="process-name">REACTION</div>
+        <span class="process-arrow">→</span>
+      </div>
+
+      <div class="process-card reveal">
+        <span class="process-number">05</span>
+        <div class="process-icon">
+          <div class="flow-lines">
+            <div class="flow-line" style="background:linear-gradient(90deg,var(--green),transparent)"></div>
+          </div>
+        </div>
+        <div class="process-name">PRODUCT</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- CHIP ANATOMY -->
+
+<section class="chip-section" id="chip">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">02 / MEET THE CHIP</div>
+
+    <h2 class="reveal">
+      INSIDE THE<br>
+      <span>MICROREACTOR.</span>
+    </h2>
+
+    <div class="anatomy-wrap">
+
+      <div class="big-chip reveal">
+
+        <svg viewBox="0 0 800 520">
+          <defs>
+            <filter id="glow">
+              <feGaussianBlur stdDeviation="5" result="b"/>
+              <feMerge>
+                <feMergeNode in="b"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+
+          <rect x="25" y="25" width="750" height="470" rx="25"
+                fill="rgba(255,255,255,.015)"
+                stroke="rgba(180,240,255,.35)"/>
+
+          <path d="M70 260 H250 L350 170 H450 L550 260 H730"
+                fill="none"
+                stroke="#63e6ff"
+                stroke-width="6"
+                filter="url(#glow)"/>
+
+          <path d="M70 350 H250 L350 350"
+                fill="none"
+                stroke="#78e6a1"
+                stroke-width="6"
+                filter="url(#glow)"/>
+
+          <circle cx="400" cy="260" r="60"
+                  fill="rgba(255,189,107,.08)"
+                  stroke="rgba(255,189,107,.5)"
+                  stroke-width="2"/>
+
+          <text x="350" y="265"
+                fill="#ffbd6b"
+                font-size="12"
+                font-family="DM Mono">
+            REACTION
+          </text>
+
+          <circle cx="70" cy="260" r="16"
+                  fill="#071016"
+                  stroke="#63e6ff"/>
+
+          <circle cx="70" cy="350" r="16"
+                  fill="#071016"
+                  stroke="#78e6a1"/>
+
+          <circle cx="730" cy="260" r="16"
+                  fill="#071016"
+                  stroke="#63e6ff"/>
+
+          <text x="50" y="120"
+                fill="#65757e"
+                font-size="11"
+                font-family="DM Mono">
+            MICROREACTOR CHIP
+          </text>
+        </svg>
+
+        <button class="hotspot hs1" data-id="1">01</button>
+        <button class="hotspot hs2" data-id="2">02</button>
+        <button class="hotspot hs3" data-id="3">03</button>
+        <button class="hotspot hs4" data-id="4">04</button>
+        <button class="hotspot hs5" data-id="5">05</button>
+
+      </div>
+
+      <div class="anatomy-info reveal">
+
+        <div class="anatomy-index" id="anatomyIndex">01 / INLET</div>
+
+        <div class="anatomy-title" id="anatomyTitle">
+          Reactant Inlet
+        </div>
+
+        <p class="anatomy-desc" id="anatomyDesc">
+          Fluids enter the microreactor through defined inlet ports before
+          being guided into the microscale channel network.
+        </p>
+
+        <div class="anatomy-tags">
+          <span class="tag">FLOW</span>
+          <span class="tag">MICROSCALE</span>
+          <span class="tag">CONTROL</span>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- MICRO TO MACRO -->
+
+<section class="zoom-section">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">03 / MICRO → MOLECULE</div>
+
+    <h2 class="reveal">
+      ZOOM INTO<br>
+      <span>THE REACTION.</span>
+    </h2>
+
+    <div class="zoom-stage" id="zoomStage">
+
+      <div class="zoom-stage-text">
+        <span id="zoomStep">CHIP SCALE</span>
+        <strong id="zoomTitle">MICROREACTOR</strong>
+      </div>
+
+      <div class="zoom-visual" id="zoomVisual">
+
+        <div class="zoom-channel"></div>
+
+        <div class="diffusion-particles" id="zoomParticles"></div>
+
+        <div class="zoom-caption">
+          SCROLL TO MOVE FROM DEVICE → CHANNEL → MOLECULE
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- DIFFUSION -->
+
+<section class="diffusion-section" id="mixing">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">04 / MICROMIXING</div>
+
+    <h2 class="reveal">
+      SMALL DISTANCES.<br>
+      <span>FAST DIFFUSION.</span>
+    </h2>
+
+    <div class="diffusion-grid">
+
+      <div class="diffusion-box reveal" id="diffusionBox">
+
+        <span class="concept-label label-left">HIGH CONCENTRATION</span>
+        <span class="concept-label label-right">LOW CONCENTRATION</span>
+
+        <div class="interface" id="interface"></div>
+
+      </div>
+
+      <div class="reveal">
+
+        <p class="section-copy" style="margin-top:0">
+          At microscale dimensions, the distance over which molecules
+          must travel can become very small. Diffusion can therefore play
+          an important role in mixing streams inside microchannels.
+        </p>
+
+        <br>
+
+        <button class="btn primary" id="diffusionBtn">
+          PLAY DIFFUSION
+        </button>
+
+        <div style="margin-top:30px;color:#64747d;font:10px DM Mono">
+          CONCEPTUAL VISUALIZATION — NOT A MOLECULAR-SCALE SIMULATION
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- SIMULATOR -->
+
+<section class="simulator" id="simulator">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">05 / LIVE REACTION SIMULATOR</div>
+
+    <h2 class="reveal">
+      RUN THE<br>
+      <span>REACTION.</span>
+    </h2>
+
+    <div class="sim-grid">
+
+      <div class="sim-screen reveal" id="simScreen">
+
+        <div class="sim-channel"></div>
+        <div class="sim-zone"></div>
+
+        <div id="simParticles"></div>
+
+        <div style="position:absolute;top:20px;left:20px;font:9px DM Mono;color:#65757e">
+          CONCEPTUAL REACTION VISUALIZATION
+        </div>
+
+      </div>
+
+      <div class="sim-panel reveal">
+
+        <div class="status" id="status">READY</div>
+
+        <div class="control">
+          <label>
+            <span>FLOW RATE</span>
+            <span id="flowValue">1.0 mL/min</span>
+          </label>
+
+          <input id="flowSlider" type="range" min="0.3" max="3" value="1" step=".1">
+        </div>
+
+        <div class="control">
+          <label>
+            <span>TEMPERATURE</span>
+            <span id="tempValue">25 °C</span>
+          </label>
+
+          <input id="tempSlider" type="range" min="15" max="60" value="25">
+        </div>
+
+        <div class="metric">
+          <span>RESIDENCE TIME</span>
+          <span id="residence">35.0 s</span>
+        </div>
+
+        <div class="metric">
+          <span>CHANNEL WIDTH</span>
+          <span>0.5 mm</span>
+        </div>
+
+        <div class="metric">
+          <span>REACTION VOLUME</span>
+          <span>35 µL</span>
+        </div>
+
+        <div class="sim-buttons">
+
+          <button class="btn primary" id="runBtn">
+            RUN
+          </button>
+
+          <button class="btn" id="pauseBtn">
+            PAUSE
+          </button>
+
+          <button class="btn" id="resetBtn">
+            RESET
+          </button>
+
+        </div>
+
+        <p style="margin-top:25px;color:#53636b;font:8px DM Mono;line-height:1.8">
+          ILLUSTRATIVE PARAMETERS. VALUES ARE NOT REPRESENTATIVE
+          OF ONE UNIVERSAL MICROREACTOR.
+        </p>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- PARAMETERS -->
+
+<section class="parameters">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">06 / MICROREACTOR PARAMETERS</div>
+
+    <h2 class="reveal">
+      CONTROL<br>
+      <span>THE PROCESS.</span>
+    </h2>
+
+    <div class="parameter-grid">
+
+      <div class="parameter reveal">
+        <div class="eyebrow">FLOW RATE</div>
+        <div class="value">1.0</div>
+        <small>mL / min · ILLUSTRATIVE</small>
+      </div>
+
+      <div class="parameter reveal">
+        <div class="eyebrow">CHANNEL WIDTH</div>
+        <div class="value">0.5</div>
+        <small>mm · ILLUSTRATIVE</small>
+      </div>
+
+      <div class="parameter reveal">
+        <div class="eyebrow">REACTION VOLUME</div>
+        <div class="value">35</div>
+        <small>µL · ILLUSTRATIVE</small>
+      </div>
+
+      <div class="parameter reveal">
+        <div class="eyebrow">TEMPERATURE</div>
+        <div class="value">25°</div>
+        <small>C · ILLUSTRATIVE</small>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- HEAT / MASS -->
+
+<section class="transfer">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">07 / TRANSPORT</div>
+
+    <h2 class="reveal">
+      CONTROL<br>
+      <span>THE HEAT.</span>
+    </h2>
+
+    <p class="section-copy reveal">
+      Microscale channels can provide a high surface-area-to-volume ratio,
+      which can support efficient heat exchange and thermal control.
+      Actual performance depends on geometry, materials and operating conditions.
+    </p>
+
+    <div class="transfer-grid">
+
+      <div class="transfer-card reveal">
+
+        <div class="eyebrow">HEAT TRANSFER</div>
+
+        <div class="heat-channel">
+          <div class="heat-wave"></div>
+          <div class="heat-wave" style="animation-delay:1.2s"></div>
+        </div>
+
+        <div style="position:absolute;bottom:30px;left:35px;font:10px DM Mono;color:#687780">
+          HIGH SURFACE-AREA-TO-VOLUME RATIO
+        </div>
+
+      </div>
+
+      <div class="transfer-card reveal">
+
+        <div class="eyebrow">MASS TRANSFER</div>
+
+        <div class="mass-lines">
+          <div class="mass-line"></div>
+          <div class="mass-line"></div>
+          <div class="mass-line"></div>
+          <div class="mass-line"></div>
+          <div class="mass-line"></div>
+        </div>
+
+        <div style="position:absolute;bottom:30px;left:35px;font:10px DM Mono;color:#687780">
+          SHORTER TRANSPORT DISTANCES
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- GREEN CHEMISTRY -->
+
+<section class="green-section">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">08 / GREEN CHEMISTRY</div>
+
+    <h2 class="reveal">
+      WHY GO<br>
+      <span>MICRO?</span>
+    </h2>
+
+    <p class="section-copy reveal">
+      Microreactor technology is not automatically “green”.
+      However, when the complete process is appropriately designed,
+      microscale processing can support more resource-efficient chemistry.
+    </p>
+
+    <div class="green-grid">
+
+      <div class="green-card reveal">
+        <div class="green-num">01</div>
+        <h3>SMALL MATERIAL QUANTITIES</h3>
+        <p>Small reaction volumes can reduce the amount of material present during experimentation and process development.</p>
+      </div>
+
+      <div class="green-card reveal">
+        <div class="green-num">02</div>
+        <h3>RAPID MIXING</h3>
+        <p>Microscale pathways can enable short diffusion distances and controlled mixing.</p>
+      </div>
+
+      <div class="green-card reveal">
+        <div class="green-num">03</div>
+        <h3>HEAT TRANSFER</h3>
+        <p>Small dimensions can support efficient thermal exchange in appropriately designed systems.</p>
+      </div>
+
+      <div class="green-card reveal">
+        <div class="green-num">04</div>
+        <h3>PROCESS CONTROL</h3>
+        <p>Flow, temperature and residence time can be controlled within a defined reaction environment.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- COMPARISON -->
+
+<section class="compare">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">09 / SYSTEM COMPARISON</div>
+
+    <h2 class="reveal">
+      CONVENTIONAL<br>
+      <span>VS MICRO.</span>
+    </h2>
+
+    <div class="compare-table reveal">
+
+      <div class="compare-row">
+        <div class="compare-head">PARAMETER</div>
+        <div class="compare-head">CONVENTIONAL REACTOR</div>
+        <div class="compare-head">MICROREACTOR</div>
+      </div>
+
+      <div class="compare-row">
+        <div>Reaction volume</div>
+        <div class="compare-value">LARGE</div>
+        <div class="compare-value">SMALL</div>
+      </div>
+
+      <div class="compare-row">
+        <div>Transport distance</div>
+        <div class="compare-value">LONGER</div>
+        <div class="compare-value">SHORTER</div>
+      </div>
+
+      <div class="compare-row">
+        <div>Flow environment</div>
+        <div class="compare-value">BULK</div>
+        <div class="compare-value">MICROSCALE</div>
+      </div>
+
+      <div class="compare-row">
+        <div>Thermal exchange</div>
+        <div class="compare-value">LARGER SCALE</div>
+        <div class="compare-value">HIGH SURFACE / VOLUME POTENTIAL</div>
+      </div>
+
+      <div class="compare-row">
+        <div>Material quantity</div>
+        <div class="compare-value">HIGHER</div>
+        <div class="compare-value">LOWER / SMALLER VOLUMES</div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- MATERIALS -->
+
+<section class="materials">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">10 / MATERIALS</div>
+
+    <h2 class="reveal">
+      GLASS.<br>
+      <span>PRECISION.</span>
+    </h2>
+
+    <div class="material-grid">
+
+      <div class="material reveal">
+        <div class="eyebrow">BOROSILICATE GLASS</div>
+
+        <p class="section-copy">
+          Optically transparent glass can provide visual observation and
+          optical access while offering useful chemical and thermal properties
+          for selected microreactor designs.
+        </p>
+
+        <div class="glass-object"></div>
+      </div>
+
+      <div class="material reveal">
+        <div class="eyebrow">QUARTZ</div>
+
+        <p class="section-copy">
+          Quartz is another transparent material used in microscale systems,
+          particularly where optical access and material compatibility are
+          important considerations.
+        </p>
+
+        <div class="glass-object" style="transform:rotate(15deg)"></div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- APPLICATIONS -->
+
+<section class="applications" id="applications">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">11 / APPLICATIONS</div>
+
+    <h2 class="reveal">
+      WHERE THE<br>
+      <span>CHIP GOES.</span>
+    </h2>
+
+    <div class="apps">
+
+      <div class="app reveal">
+        <div class="app-num">01</div>
+        <h3>CHEMICAL INDUSTRY</h3>
+        <p>Controlled microscale reaction environments for chemical process development.</p>
+      </div>
+
+      <div class="app reveal">
+        <div class="app-num">02</div>
+        <h3>PHARMACEUTICALS</h3>
+        <p>Useful for reaction development, synthesis and process optimization.</p>
+      </div>
+
+      <div class="app reveal">
+        <div class="app-num">03</div>
+        <h3>ANALYTICAL CHEMISTRY</h3>
+        <p>Small-scale controlled pathways can support analytical workflows.</p>
+      </div>
+
+      <div class="app reveal">
+        <div class="app-num">04</div>
+        <h3>BIOCHEMICAL ANALYSIS</h3>
+        <p>Microscale fluid handling and controlled reaction environments.</p>
+      </div>
+
+      <div class="app reveal">
+        <div class="app-num">05</div>
+        <h3>HIGH-THROUGHPUT SYNTHESIS</h3>
+        <p>Parallelized microscale systems can support rapid experimentation.</p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- MICROFLUIDICS DISTINCTION -->
+
+<section class="flow-section">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">12 / DON'T CONFUSE THEM</div>
+
+    <h2 class="reveal">
+      MICROFLUIDICS<br>
+      <span>≠ MICROREACTOR</span>
+    </h2>
+
+    <div class="compare-table reveal" style="margin-top:70px">
+
+      <div class="compare-row">
+
+        <div class="compare-head">CONCEPT</div>
+
+        <div class="compare-head">MICROFLUIDICS</div>
+
+        <div class="compare-head">MICROREACTOR TECHNOLOGY</div>
+
+      </div>
+
+      <div class="compare-row">
+
+        <div>Scope</div>
+
+        <div class="compare-value">BROADER FIELD</div>
+
+        <div class="compare-value">REACTION-FOCUSED SYSTEM</div>
+
+      </div>
+
+      <div class="compare-row">
+
+        <div>Main focus</div>
+
+        <div class="compare-value">MANIPULATING SMALL FLUID VOLUMES</div>
+
+        <div class="compare-value">CONTROLLED CHEMICAL REACTIONS</div>
+
+      </div>
+
+      <div class="compare-row">
+
+        <div>Central object</div>
+
+        <div class="compare-value">MICROFLUIDIC SYSTEM</div>
+
+        <div class="compare-value">MICROREACTOR CHIP</div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- NUMBERING UP -->
+
+<section class="numbering">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">13 / NUMBERING-UP</div>
+
+    <h2 class="reveal">
+      DON'T JUST<br>
+      <span>SCALE UP.</span>
+    </h2>
+
+    <p class="section-copy reveal">
+      Instead of simply enlarging one microchannel, production capacity can
+      be increased by operating multiple channels or reactor modules in
+      parallel.
+    </p>
+
+    <div class="modules" id="modules">
+
+      <div class="module"></div>
+
+    </div>
+
+    <div style="text-align:center">
+      <button class="btn primary" id="numberBtn">ADD MODULES →</button>
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- GLOSSARY -->
+
+<section class="glossary">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">14 / GLOSSARY</div>
+
+    <h2 class="reveal">
+      KNOW THE<br>
+      <span>LANGUAGE.</span>
+    </h2>
+
+    <div class="glossary-list">
+
+      <div class="term">
+        <span class="term-index">01</span>
+        <span class="term-name">Microreactor</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          A microscale reactor containing precisely defined channels or structures
+          used to control fluid flow and chemical reactions.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">02</span>
+        <span class="term-name">Microchannel</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          A small engineered pathway through which fluids move inside the device.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">03</span>
+        <span class="term-name">Micromixing</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          Mixing occurring within microscale pathways, where diffusion and fluid
+          motion can strongly influence the mixing process.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">04</span>
+        <span class="term-name">Diffusion</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          Molecular transport caused by random molecular motion, generally from
+          regions of higher concentration toward regions of lower concentration.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">05</span>
+        <span class="term-name">Residence Time</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          The time material remains within a reactor. For a simple system,
+          it is related to reactor volume and volumetric flow rate.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">06</span>
+        <span class="term-name">Flow Rate</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          The volume of fluid passing through a specified point per unit time.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">07</span>
+        <span class="term-name">Heat Transfer</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          Transfer of thermal energy between regions of different temperature.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">08</span>
+        <span class="term-name">Mass Transfer</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          Transport of chemical species from one location to another within or
+          between phases.
+        </div>
+      </div>
+
+      <div class="term">
+        <span class="term-index">09</span>
+        <span class="term-name">Numbering-Up</span>
+        <span class="term-arrow">+</span>
+        <div class="term-definition">
+          Increasing production capacity by operating multiple microreactor
+          channels or modules in parallel.
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- REFERENCES -->
+
+<section class="references">
+
+  <div class="container">
+
+    <div class="eyebrow reveal">15 / REFERENCES</div>
+
+    <h2 class="reveal">
+      SCIENCE<br>
+      <span>BEHIND THE VISUAL.</span>
+    </h2>
+
+    <div style="margin-top:70px">
+
+      <div class="ref reveal">
+        <div class="ref-num">01</div>
+        <div>
+          Ehrfeld, W., Hessel, V., Löwe, H.
+          <strong>Microreactors: New Technology for Modern Chemistry.</strong>
+          Wiley-VCH.
+        </div>
+      </div>
+
+      <div class="ref reveal">
+        <div class="ref-num">02</div>
+        <div>
+          Hessel, V., Löwe, H., Schönfeld, F.
+          <strong>Micromixers — a review on passive and active mixing principles.</strong>
+          Chemical Engineering Science.
+        </div>
+      </div>
+
+      <div class="ref reveal">
+        <div class="ref-num">03</div>
+        <div>
+          S. K. Ghosh et al.
+          Literature on microreactor technology, micromixing,
+          mass transfer and process intensification.
+        </div>
+      </div>
+
+      <div class="ref reveal">
+        <div class="ref-num">04</div>
+        <div>
+          Course / instructor material supplied for the academic project.
+          Specific edition or document should be added where applicable.
+        </div>
+      </div>
+
+    </div>
+
+    <p style="margin-top:30px;color:#4e5d65;font:9px DM Mono">
+      NOTE: VERIFY THE FINAL BIBLIOGRAPHIC DETAILS AGAINST THE SOURCES USED
+      IN YOUR ACADEMIC PROJECT BEFORE SUBMISSION.
+    </p>
+
+  </div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer>
+
+  <div>
+
+    <div class="eyebrow" style="justify-content:center">
+      MICROREACTOR TECHNOLOGY / MRT
+    </div>
+
+    <div class="footer-chip"></div>
+
+    <div class="footer-title">
+      SMALL CHANNELS.
+      <span>POWERFUL CHEMISTRY.</span>
+    </div>
+
+    <p style="max-width:600px;margin:40px auto 0;color:#66747c;line-height:1.8">
+      Microreactor Technology brings reaction pathways into the microscale,
+      creating new opportunities for controlled mixing, heat transfer,
+      process control and chemical engineering.
+    </p>
+
+  </div>
+
+</footer>
+
+
+<script>
+
+/* =========================================================
+   MRT — MICROREACTOR TECHNOLOGY
+   INTERACTIVE SCIENTIFIC EXPERIENCE
+========================================================= */
+
+
+/* ---------- HEADER ---------- */
+
+const header = document.getElementById("header");
+
+window.addEventListener("scroll",()=>{
+  header.classList.toggle("scrolled",window.scrollY > 40);
+});
+
+
+/* ---------- CURSOR ---------- */
+
+const cursor = document.getElementById("cursorLight");
+
+window.addEventListener("mousemove",(e)=>{
+  cursor.style.left=e.clientX+"px";
+  cursor.style.top=e.clientY+"px";
+});
+
+
+/* ---------- REVEAL ---------- */
+
+const observer = new IntersectionObserver(
+  entries=>{
+    entries.forEach(entry=>{
+      if(entry.isIntersecting){
+        entry.target.classList.add("visible");
+      }
+    });
+  },
+  {threshold:.12}
+);
+
+document.querySelectorAll(".reveal").forEach(el=>{
+  observer.observe(el);
+});
+
+
+/* ---------- CHIP ANATOMY ---------- */
+
+const anatomyData={
+  1:{
+    title:"Reactant Inlet",
+    desc:"Fluids enter the microreactor through defined inlet ports before being guided into the microscale channel network.",
+    tag:"01 / INLET"
+  },
+  2:{
+    title:"Microchannel",
+    desc:"A precisely engineered microscale pathway guides fluid through the reactor and defines the route available for transport and reaction.",
+    tag:"02 / MICROCHANNEL"
+  },
+  3:{
+    title:"Mixing Zone",
+    desc:"Two streams come together. At microscale dimensions, diffusion and fluid motion can strongly influence the mixing process.",
+    tag:"03 / MIXING ZONE"
+  },
+  4:{
+    title:"Reaction Zone",
+    desc:"The reaction occurs within a controlled microscale environment. This visualization is conceptual rather than a representation of a specific chemical mechanism.",
+    tag:"04 / REACTION ZONE"
+  },
+  5:{
+    title:"Product Outlet",
+    desc:"The resulting stream leaves the reactor through the outlet after passing through the defined reaction pathway.",
+    tag:"05 / OUTLET"
+  }
+};
+
+const anatomyIndex=document.getElementById("anatomyIndex");
+const anatomyTitle=document.getElementById("anatomyTitle");
+const anatomyDesc=document.getElementById("anatomyDesc");
+
+document.querySelectorAll(".hotspot").forEach(button=>{
+
+  button.addEventListener("click",()=>{
+
+    document.querySelectorAll(".hotspot")
+      .forEach(x=>x.classList.remove("active"));
+
+    button.classList.add("active");
+
+    const data=anatomyData[button.dataset.id];
+
+    anatomyIndex.textContent=data.tag;
+    anatomyTitle.textContent=data.title;
+    anatomyDesc.textContent=data.desc;
+
+  });
+
+});
+
+
+/* ---------- SCROLL ZOOM ---------- */
+
+const zoomVisual=document.getElementById("zoomVisual");
+const zoomStep=document.getElementById("zoomStep");
+const zoomTitle=document.getElementById("zoomTitle");
+
+function updateZoom(){
+
+  const section=document.querySelector(".zoom-section");
+  const rect=section.getBoundingClientRect();
+
+  const progress=Math.min(
+    1,
+    Math.max(
+      0,
+      -rect.top/(rect.height-window.innerHeight)
+    )
+  );
+
+  const scale=1+progress*5;
+
+  zoomVisual.style.transform=
+    `scale(${scale})`;
+
+  if(progress<.25){
+    zoomStep.textContent="CHIP SCALE";
+    zoomTitle.textContent="MICROREACTOR";
+  }
+  else if(progress<.5){
+    zoomStep.textContent="CHANNEL SCALE";
+    zoomTitle.textContent="MICROCHANNEL";
+  }
+  else if(progress<.75){
+    zoomStep.textContent="MIXING SCALE";
+    zoomTitle.textContent="DIFFUSION";
+  }
+  else{
+    zoomStep.textContent="REACTION SCALE";
+    zoomTitle.textContent="MOLECULES";
+  }
+
+}
+
+window.addEventListener("scroll",updateZoom);
+updateZoom();
+
+
+/* ---------- ZOOM PARTICLES ---------- */
+
+const zoomParticles=document.getElementById("zoomParticles");
+
+for(let i=0;i<30;i++){
+
+  const p=document.createElement("div");
+
+  p.className="diff-p"+(i%2?" green":"");
+
+  p.style.left=(8+Math.random()*82)+"%";
+  p.style.top=(42+Math.random()*16)+"%";
+
+  zoomParticles.appendChild(p);
+
+}
+
+
+/* ---------- DIFFUSION ---------- */
+
+const diffusionBox=document.getElementById("diffusionBox");
+const diffusionBtn=document.getElementById("diffusionBtn");
+const interfaceLine=document.getElementById("interface");
+
+let diffusionParticles=[];
+
+function createDiffusionParticles(){
+
+  diffusionParticles.forEach(p=>p.remove());
+  diffusionParticles=[];
+
+  for(let i=0;i<45;i++){
+
+    const p=document.createElement("div");
+
+    p.className="diff-particle "+(i%2?"b":"a");
+
+    const leftSide=i%2===0;
+
+    p.style.left=
+      leftSide
+      ? (5+Math.random()*35)+"%"
+      : (60+Math.random()*35)+"%";
+
+    p.style.top=(10+Math.random()*80)+"%";
+
+    diffusionBox.appendChild(p);
+    diffusionParticles.push(p);
+
+  }
+
+}
+
+createDiffusionParticles();
+
+diffusionBtn.addEventListener("click",()=>{
+
+  diffusionParticles.forEach((p,i)=>{
+
+    const side=i%2;
+
+    p.style.left=
+      (35+Math.random()*30)+"%";
+
+    p.style.top=
+      (10+Math.random()*80)+"%";
+
+  });
+
+  interfaceLine.style.opacity=".15";
+
+  diffusionBtn.textContent="DIFFUSION ACTIVE";
+
+  setTimeout(()=>{
+
+    diffusionBtn.textContent="PLAY AGAIN";
+
+  },2200);
+
+});
+
+
+/* ---------- SIMULATOR ---------- */
+
+const simScreen=document.getElementById("simScreen");
+const simParticles=document.getElementById("simParticles");
+
+let running=false;
+let simTimer;
+
+function createSimParticle(type){
+
+  const p=document.createElement("div");
+
+  p.className="sim-p";
+
+  p.style.background=
+    type==="green"
+    ? "var(--green)"
+    : "var(--cyan)";
+
+  p.style.boxShadow=
+    `0 0 12px ${
+      type==="green"
+      ? "var(--green)"
+      : "var(--cyan)"
+    }`;
+
+  p.style.left="8%";
+  p.style.top=
+    type==="green"
+    ? "calc(50% + 15px)"
+    : "calc(50% - 15px)";
+
+  simParticles.appendChild(p);
+
+  return p;
+
+}
+
+function runSimulation(){
+
+  if(!running)return;
+
+  const types=["cyan","green"];
+
+  types.forEach(type=>{
+
+    const p=createSimParticle(type);
+
+    const speed=
+      Number(document.getElementById("flowSlider").value);
+
+    const duration=5000/speed;
+
+    p.animate(
+      [
+        {transform:"translateX(0)",opacity:0},
+        {transform:"translateX(100px)",opacity:1,offset:.15},
+        {transform:"translateX(350px)",opacity:1,offset:.55},
+        {transform:"translateX(600px)",opacity:1,offset:.8},
+        {transform:"translateX(760px)",opacity:0}
+      ],
+      {
+        duration,
+        easing:"linear"
+      }
+    );
+
+    setTimeout(()=>{
+      p.remove();
+    },duration);
+
+  });
+
+  simTimer=setTimeout(runSimulation,700);
+
+}
+
+const status=document.getElementById("status");
+
+document.getElementById("runBtn").addEventListener("click",()=>{
+
+  running=true;
+
+  status.textContent="MIXING → REACTION";
+
+  runSimulation();
+
+});
+
+document.getElementById("pauseBtn").addEventListener("click",()=>{
+
+  running=false;
+
+  clearTimeout(simTimer);
+
+  status.textContent="PAUSED";
+
+});
+
+document.getElementById("resetBtn").addEventListener("click",()=>{
+
+  running=false;
+
+  clearTimeout(simTimer);
+
+  simParticles.innerHTML="";
+
+  status.textContent="READY";
+
+});
+
+
+/* ---------- FLOW RATE ---------- */
+
+const flowSlider=document.getElementById("flowSlider");
+const flowValue=document.getElementById("flowValue");
+const residence=document.getElementById("residence");
+
+flowSlider.addEventListener("input",()=>{
+
+  const value=Number(flowSlider.value);
+
+  flowValue.textContent=value.toFixed(1)+" mL/min";
+
+  const residenceTime=35/value;
+
+  residence.textContent=
+    residenceTime.toFixed(1)+" s";
+
+});
+
+
+/* ---------- TEMPERATURE ---------- */
+
+const tempSlider=document.getElementById("tempSlider");
+const tempValue=document.getElementById("tempValue");
+
+tempSlider.addEventListener("input",()=>{
+
+  tempValue.textContent=
+    tempSlider.value+" °C";
+
+});
+
+
+/* ---------- NUMBERING UP ---------- */
+
+const modules=document.getElementById("modules");
+const numberBtn=document.getElementById("numberBtn");
+
+let moduleCount=1;
+
+function addModule(){
+
+  const module=document.createElement("div");
+
+  module.className="module";
+
+  modules.appendChild(module);
+
+  requestAnimationFrame(()=>{
+    module.classList.add("show");
+  });
+
+}
+
+numberBtn.addEventListener("click",()=>{
+
+  if(moduleCount<8){
+
+    addModule();
+
+    moduleCount++;
+
+    numberBtn.textContent=
+      moduleCount<8
+      ? `ADD MODULES (${moduleCount}/8)`
+      : "ARRAY COMPLETE";
+
+  }
+
+});
+
+
+/* ---------- GLOSSARY ---------- */
+
+document.querySelectorAll(".term").forEach(term=>{
+
+  term.addEventListener("click",()=>{
+
+    const open=term.classList.contains("open");
+
+    document.querySelectorAll(".term")
+      .forEach(t=>t.classList.remove("open"));
+
+    if(!open){
+      term.classList.add("open");
+    }
+
+  });
+
+});
+
+
+/* ---------- LANGUAGE ---------- */
+
+let arabic=false;
+
+const englishText={
+  title:"MICROREACTOR TECHNOLOGY",
+  subtitle:"Chemistry, Miniaturized."
+};
+
+const arabicText={
+  title:"تقنية المفاعلات الدقيقة",
+  subtitle:"الكيمياء على نطاق مصغّر."
+};
+
+document.getElementById("langBtn").addEventListener("click",()=>{
+
+  arabic=!arabic;
+
+  document.documentElement.lang=
+    arabic ? "ar" : "en";
+
+  document.documentElement.dir=
+    arabic ? "rtl" : "ltr";
+
+  document.getElementById("langBtn").textContent=
+    arabic ? "EN / AR" : "AR / EN";
+
+  /*
+    The scientific interface intentionally keeps
+    technical labels in English because MRT terminology
+    is commonly presented in English in scientific literature.
+  */
+
+  const title=document.querySelector(".hero-title");
+
+  if(arabic){
+
+    title.innerHTML=
+      `تقنية<br><span class="outline">المفاعلات الدقيقة</span>`;
+
+    document.querySelector(".hero-sub").innerHTML=
+      `الكيمياء على نطاق مصغّر.<br>
+      استكشف كيف يمكن تنفيذ التفاعلات الكيميائية داخل
+      قنوات دقيقة، حيث يساهم المزج والانتشار وانتقال الحرارة
+      والتحكم في التدفق في تطوير عمليات كيميائية أكثر دقة.`;
+
+  }else{
+
+    title.innerHTML=
+      `MICROREACTOR<br><span class="outline">TECHNOLOGY</span>`;
+
+    document.querySelector(".hero-sub").innerHTML=
+      `Chemistry, Miniaturized.<br>
+      Explore how chemical reactions can be performed inside
+      microscale channels, where rapid mixing, diffusion,
+      heat transfer and precise flow control reshape chemical processing.`;
+
+  }
+
+});
+
+
+/* ---------- REDUCED MOTION ---------- */
+
+if(window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+
+  document.querySelectorAll("*").forEach(el=>{
+    el.style.animationDuration="0.001ms";
+    el.style.transitionDuration="0.001ms";
+  });
+
+}
+
+
+/* ---------- INITIAL STATE ---------- */
+
+setTimeout(()=>{
+
+  document.querySelectorAll(".reveal").forEach(el=>{
+
+    const rect=el.getBoundingClientRect();
+
+    if(rect.top<window.innerHeight){
+      el.classList.add("visible");
+    }
+
+  });
+
+},300);
+
+</script>
+
+</body>
+</html>
