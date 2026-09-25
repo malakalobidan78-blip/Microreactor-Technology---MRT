@@ -1,1593 +1,641 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="theme-color" content="#05080b">
-<meta name="description" content="Interactive scientific visualization of Microreactor Technology">
-<title>Microreactor Technology — MRT</title>
+<meta name="description" content="Microreactor Technology — Interactive scientific learning experience">
+<title>Microreactor Technology | MRT</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Inter:wght@300;400;500;600;700;800;900&display=swap');
-
 :root{
-  --bg:#05080b;
-  --bg2:#080d12;
-  --panel:rgba(13,20,27,.75);
-  --line:rgba(255,255,255,.10);
-  --white:#f4f7f8;
-  --muted:#81909b;
-  --cyan:#63e6ff;
-  --green:#78e6a1;
-  --amber:#ffbd6b;
-  --red:#ff7d75;
-  --max:1400px;
-  --ease:cubic-bezier(.16,1,.3,1);
+  --bg:#07111f;
+  --bg2:#0b1728;
+  --card:#101f33;
+  --card2:#13263d;
+  --line:#263b54;
+  --text:#edf5ff;
+  --muted:#9eb1c8;
+  --accent:#4de1c1;
+  --accent2:#63a4ff;
+  --hot:#ff9b66;
+  --cold:#65b8ff;
+  --danger:#ff7182;
+  --yellow:#ffd166;
+  --shadow:0 20px 60px rgba(0,0,0,.25);
 }
 
-*{
-  box-sizing:border-box;
-  margin:0;
-  padding:0;
-}
+*{box-sizing:border-box}
 
 html{
   scroll-behavior:smooth;
-  background:var(--bg);
 }
 
 body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
   background:
-    radial-gradient(circle at 75% 10%,rgba(61,220,255,.07),transparent 28%),
-    radial-gradient(circle at 15% 45%,rgba(92,255,170,.035),transparent 25%),
+    radial-gradient(circle at 10% 10%,rgba(77,225,193,.08),transparent 28%),
+    radial-gradient(circle at 90% 15%,rgba(99,164,255,.08),transparent 28%),
     var(--bg);
-  color:var(--white);
-  font-family:Inter,sans-serif;
-  overflow-x:hidden;
-}
-
-body:before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  z-index:999;
-  opacity:.025;
-  background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 180 180' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  color:var(--text);
+  line-height:1.6;
 }
 
 a{
   color:inherit;
-  text-decoration:none;
+}
+
+button,
+input,
+select{
+  font:inherit;
 }
 
 button{
-  font:inherit;
-  color:inherit;
-}
-
-section{
-  position:relative;
+  cursor:pointer;
 }
 
 .container{
-  width:min(var(--max),calc(100% - 80px));
+  width:min(1180px,92%);
   margin:auto;
 }
 
-.mono{
-  font-family:"DM Mono",monospace;
-  letter-spacing:.08em;
-}
-
-.eyebrow{
-  color:var(--cyan);
-  font:500 11px "DM Mono",monospace;
-  letter-spacing:.22em;
-  text-transform:uppercase;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
-
-.eyebrow:before{
-  content:"";
-  width:26px;
-  height:1px;
-  background:currentColor;
-}
-
-h2{
-  font-size:clamp(42px,6vw,90px);
-  line-height:.92;
-  letter-spacing:-.065em;
-  font-weight:700;
-  margin-top:22px;
-}
-
-h2 span{
-  color:transparent;
-  -webkit-text-stroke:1px rgba(255,255,255,.45);
-}
-
-.section-copy{
-  max-width:650px;
-  margin-top:28px;
-  color:#9aa8b1;
-  font-size:16px;
-  line-height:1.8;
-}
-
 header{
-  position:fixed;
+  position:sticky;
   top:0;
-  left:0;
-  width:100%;
   z-index:100;
-  padding:20px 0;
-  transition:.5s var(--ease);
-}
-
-header.scrolled{
-  background:rgba(5,8,11,.78);
   backdrop-filter:blur(18px);
-  border-bottom:1px solid var(--line);
+  background:rgba(7,17,31,.78);
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
 
 .nav{
+  min-height:72px;
   display:flex;
   align-items:center;
   justify-content:space-between;
+  gap:20px;
 }
 
 .logo{
-  display:flex;
-  align-items:center;
-  gap:12px;
   font-weight:800;
   letter-spacing:.08em;
-  font-size:13px;
 }
 
-.logo-mark{
-  width:27px;
-  height:27px;
-  border:1px solid var(--cyan);
-  position:relative;
-  transform:rotate(45deg);
+.logo span{
+  color:var(--accent);
 }
 
-.logo-mark:after{
-  content:"";
-  position:absolute;
-  inset:5px;
-  border:1px solid var(--green);
-}
-
-.nav-links{
+nav{
   display:flex;
-  gap:28px;
-  color:#89969e;
-  font-size:11px;
-  font-family:"DM Mono",monospace;
+  gap:20px;
+  flex-wrap:wrap;
 }
 
-.nav-links a:hover{
-  color:white;
+nav a{
+  text-decoration:none;
+  color:var(--muted);
+  font-size:.9rem;
 }
 
-.nav-right{
-  display:flex;
-  align-items:center;
-  gap:14px;
+nav a:hover{
+  color:var(--text);
 }
-
-.lang,
-.menu-btn{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.035);
-  padding:9px 13px;
-  cursor:pointer;
-  font-size:10px;
-  font-family:"DM Mono",monospace;
-}
-
-.menu-btn{
-  display:none;
-}
-
-/* HERO */
 
 .hero{
-  min-height:100vh;
-  display:flex;
-  align-items:center;
+  min-height:650px;
+  display:grid;
+  place-items:center;
+  position:relative;
   overflow:hidden;
 }
 
 .hero-grid{
-  position:absolute;
-  inset:0;
-  opacity:.22;
-  background-image:
-    linear-gradient(rgba(100,230,255,.06) 1px,transparent 1px),
-    linear-gradient(90deg,rgba(100,230,255,.06) 1px,transparent 1px);
-  background-size:80px 80px;
-  mask-image:linear-gradient(to bottom,black,transparent 85%);
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:60px;
+  align-items:center;
 }
 
-.hero-content{
-  position:relative;
-  z-index:4;
-  padding-top:90px;
-  pointer-events:none;
-}
-
-.hero-content>*{
-  pointer-events:auto;
-}
-
-.hero-title{
-  font-size:clamp(65px,10vw,155px);
-  line-height:.78;
-  letter-spacing:-.085em;
+.eyebrow{
+  color:var(--accent);
+  font-size:.8rem;
   font-weight:800;
-  max-width:800px;
-  margin-top:30px;
+  letter-spacing:.18em;
+  text-transform:uppercase;
 }
 
-.hero-title .outline{
-  color:transparent;
-  -webkit-text-stroke:1px rgba(255,255,255,.65);
+h1{
+  font-size:clamp(3rem,7vw,6.8rem);
+  line-height:.9;
+  margin:20px 0;
+  letter-spacing:-.06em;
 }
 
-.hero-sub{
-  margin-top:35px;
-  max-width:540px;
-  color:#8998a2;
-  line-height:1.8;
-  font-size:15px;
+h2{
+  font-size:clamp(2rem,4vw,3.5rem);
+  line-height:1;
+  letter-spacing:-.04em;
+  margin:0 0 18px;
 }
 
-.hero-actions{
-  margin-top:34px;
+h3{
+  margin:0 0 10px;
+}
+
+.hero p{
+  color:var(--muted);
+  font-size:1.12rem;
+  max-width:650px;
+}
+
+.cta-row{
   display:flex;
+  flex-wrap:wrap;
   gap:12px;
+  margin-top:30px;
 }
 
 .btn{
   border:1px solid var(--line);
-  background:rgba(255,255,255,.04);
-  padding:15px 20px;
-  cursor:pointer;
-  font-size:10px;
-  letter-spacing:.12em;
-  font-family:"DM Mono",monospace;
-  transition:.35s var(--ease);
-}
-
-.btn.primary{
-  background:var(--white);
-  color:#05080b;
+  border-radius:12px;
+  padding:13px 18px;
+  color:var(--text);
+  background:var(--card);
+  text-decoration:none;
+  transition:.2s;
 }
 
 .btn:hover{
-  transform:translateY(-3px);
-  border-color:var(--cyan);
+  transform:translateY(-2px);
+  border-color:var(--accent);
+}
+
+.btn.primary{
+  background:var(--accent);
+  color:#06131c;
+  border-color:var(--accent);
+  font-weight:800;
 }
 
 .hero-chip{
-  position:absolute;
-  width:min(54vw,760px);
-  aspect-ratio:1.55;
-  right:2%;
-  top:50%;
-  transform:translateY(-50%) perspective(1000px) rotateX(55deg) rotateZ(-9deg);
-  z-index:2;
-  filter:drop-shadow(0 0 50px rgba(75,220,255,.08));
+  position:relative;
+  border:1px solid var(--line);
+  background:linear-gradient(145deg,rgba(19,38,61,.9),rgba(8,20,35,.95));
+  border-radius:30px;
+  padding:30px;
+  box-shadow:var(--shadow);
 }
 
-.chip-body{
-  position:absolute;
-  inset:0;
-  border:1px solid rgba(180,240,255,.45);
-  border-radius:18px;
+.chip{
+  height:390px;
+  border:2px solid rgba(99,164,255,.35);
+  border-radius:30px;
+  position:relative;
+  overflow:hidden;
   background:
-    linear-gradient(135deg,rgba(160,240,255,.09),rgba(255,255,255,.015)),
-    rgba(255,255,255,.018);
-  box-shadow:
-    inset 0 0 60px rgba(100,220,255,.04),
-    0 40px 100px rgba(0,0,0,.45);
-  backdrop-filter:blur(5px);
-}
-
-.chip-body:before{
-  content:"";
-  position:absolute;
-  inset:9px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;
-}
-
-.chip-label{
-  position:absolute;
-  top:28px;
-  left:35px;
-  font:9px "DM Mono";
-  color:#667983;
-  letter-spacing:.18em;
-}
-
-.port{
-  position:absolute;
-  width:35px;
-  height:35px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,.35);
-  background:#071016;
-  box-shadow:inset 0 0 15px rgba(100,220,255,.15);
-}
-
-.port.a{left:2%;top:44%}
-.port.b{left:2%;top:62%}
-.port.out{right:2%;top:53%}
-
-.channels{
-  position:absolute;
-  inset:14%;
+    linear-gradient(90deg,transparent 49%,rgba(99,164,255,.08) 50%,transparent 51%),
+    linear-gradient(0deg,transparent 49%,rgba(99,164,255,.08) 50%,transparent 51%),
+    #081827;
 }
 
 .channel{
   position:absolute;
-  height:3px;
-  background:linear-gradient(90deg,var(--cyan),rgba(99,230,255,.08));
-  box-shadow:0 0 12px rgba(99,230,255,.55);
-  border-radius:100px;
+  height:42px;
+  border-radius:30px;
+  border:2px solid rgba(77,225,193,.55);
+  background:rgba(77,225,193,.05);
 }
 
-.c1{
-  width:33%;
-  left:-10%;
-  top:30%;
+.channel.c1{
+  width:70%;
+  top:42%;
+  left:15%;
 }
 
-.c2{
-  width:33%;
-  left:-10%;
-  top:65%;
-  background:linear-gradient(90deg,var(--green),rgba(120,230,161,.05));
-  box-shadow:0 0 12px rgba(120,230,161,.5);
+.channel.c2{
+  width:30%;
+  top:25%;
+  left:35%;
+  transform:rotate(90deg);
 }
 
-.c3{
-  width:26%;
-  left:21%;
-  top:30%;
-  transform:rotate(35deg);
-  transform-origin:left;
-}
-
-.c4{
-  width:26%;
-  left:21%;
-  top:65%;
-  transform:rotate(-35deg);
-  transform-origin:left;
-}
-
-.c5{
-  width:43%;
-  left:39%;
-  top:48%;
-}
-
-.reaction-zone{
+.port{
   position:absolute;
-  left:45%;
-  top:38%;
-  width:15%;
-  aspect-ratio:1;
+  width:18px;
+  height:18px;
   border-radius:50%;
-  background:radial-gradient(circle,rgba(255,189,107,.25),transparent 65%);
-  box-shadow:0 0 60px rgba(255,189,107,.12);
-  animation:pulse 2.5s infinite;
+  background:var(--accent);
+  box-shadow:0 0 25px rgba(77,225,193,.7);
 }
 
-@keyframes pulse{
-  0%,100%{
-    transform:scale(.85);
-    opacity:.5;
-  }
-  50%{
-    transform:scale(1.15);
-    opacity:1;
-  }
+.p1{left:8%;top:44%}
+.p2{right:8%;top:44%}
+
+.section{
+  padding:110px 0;
+  border-top:1px solid rgba(255,255,255,.05);
 }
 
-.particle{
-  position:absolute;
-  width:6px;
-  height:6px;
-  border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 10px currentColor;
-  z-index:5;
+.section-intro{
+  max-width:760px;
+  margin-bottom:45px;
 }
 
-.particle.green{
-  background:var(--green);
-  color:var(--green);
+.section-intro p{
+  color:var(--muted);
 }
 
-.p1{
-  left:8%;
-  top:30%;
-  animation:flow1 3.2s linear infinite;
-}
-
-.p2{
-  left:5%;
-  top:65%;
-  animation:flow2 3.7s linear infinite;
-}
-
-.p3{
-  left:18%;
-  top:30%;
-  animation:flow1 3.2s 1s linear infinite;
-}
-
-.p4{
-  left:12%;
-  top:65%;
-  animation:flow2 3.7s 1.4s linear infinite;
-}
-
-@keyframes flow1{
-  0%{
-    transform:translate(0,0);
-    opacity:0;
-  }
-  10%{
-    opacity:1;
-  }
-  70%{
-    transform:translate(410px,80px);
-  }
-  100%{
-    transform:translate(650px,30px);
-    opacity:0;
-  }
-}
-
-@keyframes flow2{
-  0%{
-    transform:translate(0,0);
-    opacity:0;
-  }
-  10%{
-    opacity:1;
-  }
-  70%{
-    transform:translate(410px,-80px);
-  }
-  100%{
-    transform:translate(650px,-25px);
-    opacity:0;
-  }
-}
-
-.floating-label{
-  position:absolute;
-  font:9px "DM Mono";
-  color:#82949e;
-  letter-spacing:.1em;
-}
-
-.fl1{
-  right:4%;
-  top:39%;
-}
-
-.fl2{
-  left:17%;
-  top:24%;
-}
-
-.fl3{
-  left:53%;
-  top:67%;
-  color:var(--amber);
-}
-
-.scroll-indicator{
-  position:absolute;
-  bottom:30px;
-  left:50%;
-  transform:translateX(-50%);
-  color:#586871;
-  font:9px "DM Mono";
-  letter-spacing:.2em;
-}
-
-.scroll-indicator:after{
-  content:"";
-  display:block;
-  width:1px;
-  height:45px;
-  background:linear-gradient(var(--cyan),transparent);
-  margin:12px auto 0;
-}
-
-/* GENERAL SECTIONS */
-
-.flow-section,
-.chip-section,
-.diffusion-section,
-.simulator,
-.parameters,
-.transfer,
-.green-section,
-.comparison,
-.materials,
-.applications,
-.distinction,
-.numbering,
-.glossary,
-.references{
-  padding:170px 0;
-  border-top:1px solid var(--line);
-}
-
-/* PROCESS */
-
-.process{
-  margin-top:90px;
+.grid-2{
   display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
+  grid-template-columns:1fr 1fr;
+  gap:24px;
 }
 
-.process-card{
-  min-height:260px;
+.grid-3{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+
+.card{
+  background:linear-gradient(145deg,var(--card),rgba(12,28,46,.85));
   border:1px solid var(--line);
-  padding:25px;
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(145deg,rgba(255,255,255,.035),transparent);
-  transition:.5s var(--ease);
-}
-
-.process-card:hover{
-  transform:translateY(-8px);
-  border-color:rgba(99,230,255,.35);
-}
-
-.process-number{
-  font:10px "DM Mono";
-  color:#53636c;
-}
-
-.process-icon{
-  height:130px;
-  margin:20px 0;
-  position:relative;
-}
-
-.process-name{
-  font-size:12px;
-  font-family:"DM Mono";
-  letter-spacing:.12em;
-}
-
-.process-arrow{
-  position:absolute;
-  right:-17px;
-  top:50%;
-  color:#47545b;
-  z-index:5;
-}
-
-.flow-lines{
-  position:absolute;
-  inset:20px;
-}
-
-.flow-line{
-  height:2px;
-  background:linear-gradient(90deg,var(--cyan),transparent);
-  margin-top:40px;
-  position:relative;
-}
-
-.flow-line:after{
-  content:"";
-  position:absolute;
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 15px var(--cyan);
-  animation:lineMove 2s linear infinite;
-}
-
-@keyframes lineMove{
-  from{left:0}
-  to{left:100%}
-}
-
-/* CHIP */
-
-.anatomy-wrap{
-  display:grid;
-  grid-template-columns:1fr 1.4fr;
-  align-items:center;
-  gap:80px;
-  margin-top:90px;
-}
-
-.big-chip{
-  aspect-ratio:1.5;
-  position:relative;
-  border:1px solid rgba(150,230,255,.25);
-  background:rgba(255,255,255,.025);
   border-radius:20px;
-  box-shadow:0 50px 100px rgba(0,0,0,.35);
-  overflow:hidden;
+  padding:25px;
+  box-shadow:0 15px 40px rgba(0,0,0,.12);
 }
 
-.big-chip svg{
-  width:100%;
-  height:100%;
-}
-
-.hotspot{
-  position:absolute;
-  width:30px;
-  height:30px;
-  border-radius:50%;
-  border:1px solid var(--cyan);
-  background:#061015;
-  cursor:pointer;
-  z-index:5;
-  transition:.3s;
-  font:9px "DM Mono";
-}
-
-.hotspot:hover,
-.hotspot.active{
-  background:var(--cyan);
-  color:#000;
-  box-shadow:0 0 30px rgba(99,230,255,.5);
-}
-
-.hs1{left:8%;top:43%}
-.hs2{left:39%;top:30%}
-.hs3{left:51%;top:44%}
-.hs4{left:59%;top:44%}
-.hs5{right:7%;top:44%}
-
-.anatomy-info{
-  min-height:280px;
-  border-left:1px solid var(--line);
-  padding-left:40px;
-}
-
-.anatomy-index{
-  font:12px "DM Mono";
-  color:var(--cyan);
-}
-
-.anatomy-title{
-  font-size:42px;
-  margin:18px 0;
-  letter-spacing:-.04em;
-}
-
-.anatomy-desc{
-  color:#87959e;
-  line-height:1.8;
-  max-width:500px;
-}
-
-.anatomy-tags{
-  display:flex;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-top:28px;
+.card p{
+  color:var(--muted);
 }
 
 .tag{
-  border:1px solid var(--line);
-  padding:8px 10px;
-  font:9px "DM Mono";
-  color:#687780;
+  display:inline-flex;
+  padding:5px 9px;
+  border-radius:999px;
+  background:rgba(77,225,193,.1);
+  color:var(--accent);
+  font-size:.72rem;
+  font-weight:800;
+  letter-spacing:.08em;
 }
 
-/* ZOOM */
-
-.zoom-section{
-  min-height:160vh;
-  padding:180px 0;
-  background:#030609;
-  border-top:1px solid var(--line);
-}
-
-.zoom-stage{
-  height:70vh;
-  position:sticky;
-  top:15vh;
-  margin-top:80px;
+.flow-diagram{
   display:flex;
   align-items:center;
   justify-content:center;
-  overflow:hidden;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-top:30px;
 }
 
-.zoom-visual{
-  width:700px;
-  height:430px;
-  position:relative;
-  transition:transform .15s linear;
-}
-
-.zoom-channel{
-  position:absolute;
-  left:5%;
-  right:5%;
-  top:48%;
-  height:35px;
-  border-radius:30px;
-  border:1px solid rgba(99,230,255,.35);
-  background:rgba(99,230,255,.025);
-  box-shadow:0 0 70px rgba(99,230,255,.06);
-}
-
-.zoom-channel:before,
-.zoom-channel:after{
-  content:"";
-  position:absolute;
-  width:14px;
-  height:14px;
-  border-radius:50%;
-  top:9px;
-}
-
-.zoom-channel:before{
-  left:8%;
-  background:var(--cyan);
-  box-shadow:0 0 15px var(--cyan);
-}
-
-.zoom-channel:after{
-  right:20%;
-  background:var(--green);
-  box-shadow:0 0 15px var(--green);
-}
-
-.diffusion-particles{
-  position:absolute;
-  inset:0;
-}
-
-.diff-p{
-  position:absolute;
-  width:8px;
-  height:8px;
-  border-radius:50%;
-  background:var(--cyan);
-  box-shadow:0 0 12px var(--cyan);
-  transition:.5s;
-}
-
-.diff-p.green{
-  background:var(--green);
-  box-shadow:0 0 12px var(--green);
-}
-
-.zoom-caption{
-  position:absolute;
-  left:0;
-  bottom:0;
-  font:10px "DM Mono";
-  color:#53636b;
-  letter-spacing:.15em;
-}
-
-.zoom-stage-text{
-  position:absolute;
-  top:20px;
-  left:0;
-}
-
-.zoom-stage-text strong{
-  display:block;
-  font-size:clamp(30px,4vw,60px);
-  letter-spacing:-.05em;
-}
-
-.zoom-stage-text span{
-  font:10px "DM Mono";
-  color:var(--cyan);
-}
-
-/* DIFFUSION */
-
-.diffusion-grid{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:80px;
-  align-items:center;
-  margin-top:80px;
-}
-
-.diffusion-box{
-  height:390px;
+.flow-step{
+  min-width:130px;
+  text-align:center;
+  padding:18px;
   border:1px solid var(--line);
-  position:relative;
-  overflow:hidden;
-  background:
-    linear-gradient(90deg,rgba(99,230,255,.06) 50%,rgba(120,230,161,.06) 50%);
+  border-radius:15px;
+  background:var(--bg2);
 }
 
-.interface{
-  position:absolute;
-  left:50%;
-  top:0;
-  bottom:0;
-  width:1px;
-  background:rgba(255,255,255,.5);
-  transition:.8s;
+.arrow{
+  color:var(--accent);
+  font-size:1.5rem;
 }
-
-.diff-particle{
-  position:absolute;
-  width:7px;
-  height:7px;
-  border-radius:50%;
-  transition:1.8s ease-in-out;
-}
-
-.diff-particle.a{
-  background:var(--cyan);
-  box-shadow:0 0 12px var(--cyan);
-}
-
-.diff-particle.b{
-  background:var(--green);
-  box-shadow:0 0 12px var(--green);
-}
-
-.concept-label{
-  position:absolute;
-  top:18px;
-  font:9px "DM Mono";
-  color:#7d8b92;
-}
-
-.label-left{left:18px}
-.label-right{right:18px}
 
 /* SIMULATOR */
 
-.sim-grid{
+.simulator{
   display:grid;
-  grid-template-columns:1.5fr .8fr;
-  gap:25px;
-  margin-top:80px;
+  grid-template-columns:330px 1fr;
+  gap:20px;
 }
 
-.sim-screen{
-  min-height:500px;
-  border:1px solid var(--line);
-  position:relative;
-  overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 50%,rgba(255,189,107,.07),transparent 25%);
-}
-
-.sim-channel{
-  position:absolute;
-  left:10%;
-  right:10%;
-  top:50%;
-  height:42px;
-  border:1px solid rgba(255,255,255,.15);
-  border-radius:30px;
-}
-
-.sim-zone{
-  position:absolute;
-  left:47%;
-  top:calc(50% - 45px);
-  width:100px;
-  height:130px;
-  background:radial-gradient(circle,rgba(255,189,107,.22),transparent 65%);
-  animation:pulse 2s infinite;
-}
-
-.sim-p{
-  position:absolute;
-  width:9px;
-  height:9px;
-  border-radius:50%;
-}
-
-.sim-panel{
-  border:1px solid var(--line);
-  background:rgba(255,255,255,.025);
-  padding:30px;
-}
-
-.control{
-  margin-bottom:30px;
+.controls{
+  display:flex;
+  flex-direction:column;
+  gap:17px;
 }
 
 .control label{
   display:flex;
   justify-content:space-between;
-  font:9px "DM Mono";
-  color:#718089;
-  margin-bottom:12px;
+  gap:15px;
+  color:var(--muted);
+  font-size:.88rem;
+  margin-bottom:8px;
 }
 
-input[type=range]{
+.control output{
+  color:var(--accent);
+  font-weight:800;
+}
+
+input[type="range"]{
   width:100%;
-  accent-color:var(--cyan);
+  accent-color:var(--accent);
 }
 
-.status{
-  font:11px "DM Mono";
-  color:var(--green);
-  margin-bottom:25px;
+.sim-visual{
+  min-width:0;
+  border:1px solid var(--line);
+  border-radius:20px;
+  padding:20px;
+  background:#06121f;
+}
+
+#reactorCanvas{
+  width:100%;
+  height:410px;
+  display:block;
+  border-radius:15px;
+  background:
+    radial-gradient(circle at 50% 50%,rgba(77,225,193,.04),transparent 60%),
+    #06101b;
+}
+
+.legend{
   display:flex;
-  align-items:center;
-  gap:8px;
+  gap:20px;
+  flex-wrap:wrap;
+  margin-top:14px;
+  color:var(--muted);
+  font-size:.8rem;
 }
 
-.status:before{
-  content:"";
-  width:6px;
-  height:6px;
+.dot{
+  width:10px;
+  height:10px;
+  display:inline-block;
   border-radius:50%;
-  background:currentColor;
-  box-shadow:0 0 12px currentColor;
+  margin-right:5px;
 }
 
-.sim-buttons{
-  display:flex;
-  gap:8px;
-}
+.dot.a{background:#65a4ff}
+.dot.b{background:#ff9b66}
+.dot.c{background:#4de1c1}
 
-.sim-buttons button{
-  flex:1;
+.metrics{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:15px;
 }
 
 .metric{
-  border-top:1px solid var(--line);
-  padding:18px 0;
-  display:flex;
-  justify-content:space-between;
-}
-
-.metric span:first-child{
-  color:#65747d;
-  font:9px "DM Mono";
-}
-
-.metric span:last-child{
-  font:12px "DM Mono";
-}
-
-/* PARAMETERS */
-
-.parameter-grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-  margin-top:70px;
-}
-
-.parameter{
   border:1px solid var(--line);
-  padding:30px;
-  min-height:170px;
-  position:relative;
-  background:rgba(255,255,255,.02);
+  background:var(--card);
+  padding:14px;
+  border-radius:13px;
 }
 
-.parameter .value{
-  font-size:36px;
-  margin-top:25px;
-  letter-spacing:-.05em;
+.metric small{
+  display:block;
+  color:var(--muted);
+  font-size:.68rem;
+  letter-spacing:.08em;
 }
 
-.parameter small{
-  color:#5f6e76;
-  font:8px "DM Mono";
+.metric strong{
+  display:block;
+  margin-top:5px;
+  font-size:1.15rem;
 }
 
-/* TRANSFER */
+/* TIMELINE */
 
-.transfer-grid{
+.timeline{
   display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:15px;
-  margin-top:80px;
+  grid-template-columns:repeat(5,1fr);
+  gap:10px;
 }
 
-.transfer-card{
-  min-height:420px;
+.timeline button{
   border:1px solid var(--line);
-  padding:40px;
+  background:var(--card);
+  color:var(--muted);
+  border-radius:14px;
+  padding:15px 10px;
+  min-height:75px;
+}
+
+.timeline button.active{
+  color:var(--text);
+  border-color:var(--accent);
+  background:rgba(77,225,193,.08);
+}
+
+.stage-content{
+  margin-top:20px;
+  min-height:180px;
+}
+
+/* EQUATIONS */
+
+.equation{
+  padding:22px;
+  border:1px solid var(--line);
+  border-radius:15px;
+  background:#071522;
+  font-family:Georgia,serif;
+  font-size:1.45rem;
+  text-align:center;
+  overflow:auto;
+}
+
+.note{
+  border-left:3px solid var(--accent);
+  padding:15px 18px;
+  background:rgba(77,225,193,.05);
+  color:var(--muted);
+  margin-top:20px;
+}
+
+.warning{
+  border-left:3px solid var(--yellow);
+  background:rgba(255,209,102,.05);
+}
+
+/* HEAT */
+
+.heat-map{
+  height:260px;
+  border-radius:18px;
+  border:1px solid var(--line);
   position:relative;
   overflow:hidden;
-  background:
-    radial-gradient(circle at 50% 50%,rgba(99,230,255,.06),transparent 35%);
+  background:linear-gradient(90deg,#173e65,#16314e,#572f22,#8b3b24);
 }
 
-.transfer-card h3{
-  font-size:34px;
-  letter-spacing:-.04em;
-  margin-bottom:20px;
-}
-
-.transfer-card p{
-  color:#85939c;
-  line-height:1.8;
-  max-width:480px;
-}
-
-.transfer-visual{
+.heat-channel{
   position:absolute;
-  left:12%;
-  right:12%;
-  bottom:45px;
-  height:130px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:20px;
+  height:65px;
+  left:8%;
+  right:8%;
+  top:38%;
+  border:2px solid rgba(255,255,255,.5);
+  border-radius:50px;
+  background:rgba(0,0,0,.22);
 }
 
-.transfer-line{
+.heat-label{
   position:absolute;
-  left:10%;
-  right:10%;
-  top:50%;
-  height:3px;
-  background:linear-gradient(90deg,var(--cyan),var(--green));
-  box-shadow:0 0 20px rgba(99,230,255,.3);
+  padding:10px;
+  font-size:.75rem;
+  font-weight:800;
 }
 
-.transfer-dot{
-  position:absolute;
-  width:12px;
-  height:12px;
-  border-radius:50%;
-  top:calc(50% - 6px);
-  background:var(--cyan);
-  box-shadow:0 0 15px var(--cyan);
-  animation:transferMove 3s linear infinite;
+.hot-label{
+  right:8%;
+  top:12%;
 }
 
-@keyframes transferMove{
-  from{left:10%}
-  to{left:88%}
-}
-
-/* GREEN */
-
-.green-grid{
-  margin-top:80px;
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:12px;
-}
-
-.green-card{
-  border:1px solid var(--line);
-  padding:30px;
-  min-height:250px;
-  background:rgba(255,255,255,.02);
-}
-
-.green-card .number{
-  color:var(--green);
-  font:10px "DM Mono";
-}
-
-.green-card h3{
-  font-size:20px;
-  margin:40px 0 15px;
-}
-
-.green-card p{
-  color:#7e8c95;
-  font-size:14px;
-  line-height:1.7;
+.cool-label{
+  left:8%;
+  bottom:10%;
 }
 
 /* COMPARISON */
 
-.table-wrap{
-  margin-top:80px;
-  border:1px solid var(--line);
-  overflow-x:auto;
+.compare{
+  overflow:auto;
 }
 
-table{
+.compare table{
   width:100%;
   border-collapse:collapse;
   min-width:700px;
 }
 
-th,td{
-  padding:20px;
+.compare th,
+.compare td{
   border-bottom:1px solid var(--line);
+  padding:15px;
   text-align:left;
-  font-size:12px;
 }
 
-th{
-  font:10px "DM Mono";
-  color:var(--cyan);
-  letter-spacing:.1em;
+.compare th{
+  color:var(--accent);
 }
 
-td{
-  color:#9aa7ae;
-}
+/* CONCEPT MAP */
 
-td:first-child{
-  color:var(--white);
-  font-family:"DM Mono";
-  font-size:10px;
-}
-
-/* MATERIALS */
-
-.material-grid{
-  margin-top:80px;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-}
-
-.material{
-  border:1px solid var(--line);
-  min-height:250px;
-  padding:28px;
-  position:relative;
-  overflow:hidden;
-}
-
-.material:after{
-  content:"";
-  position:absolute;
-  width:130px;
-  height:130px;
-  border-radius:50%;
-  right:-40px;
-  bottom:-40px;
-  border:1px solid rgba(99,230,255,.13);
-  box-shadow:0 0 50px rgba(99,230,255,.04);
-}
-
-.material h3{
-  font-size:16px;
-  letter-spacing:.02em;
-  margin-bottom:15px;
-}
-
-.material p{
-  color:#7e8c95;
-  line-height:1.7;
-  font-size:13px;
-}
-
-.material-note{
-  margin-top:25px;
-  color:#66757e;
-  font-size:12px;
-  line-height:1.7;
-  max-width:800px;
-}
-
-/* APPLICATIONS */
-
-.application-grid{
-  margin-top:80px;
-  display:grid;
-  grid-template-columns:repeat(5,1fr);
-  gap:12px;
-}
-
-.application{
-  border:1px solid var(--line);
-  padding:30px;
-  min-height:260px;
-  background:linear-gradient(145deg,rgba(255,255,255,.025),transparent);
-}
-
-.application .number{
-  color:var(--cyan);
-  font:10px "DM Mono";
-}
-
-.application h3{
-  margin-top:60px;
-  font-size:17px;
-}
-
-.application p{
-  color:#7e8c95;
-  line-height:1.7;
-  font-size:13px;
-  margin-top:15px;
-}
-
-/* MICROFLUIDICS */
-
-.distinction-grid{
-  margin-top:80px;
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:12px;
-}
-
-.concept-card{
-  border:1px solid var(--line);
-  padding:45px;
-  min-height:350px;
-  background:rgba(255,255,255,.02);
-}
-
-.concept-card.active{
-  border-color:rgba(99,230,255,.35);
-}
-
-.concept-card .mini-label{
-  color:var(--cyan);
-  font:10px "DM Mono";
-  letter-spacing:.15em;
-}
-
-.concept-card h3{
-  font-size:42px;
-  margin:30px 0;
-  letter-spacing:-.05em;
-}
-
-.concept-card p{
-  color:#84929b;
-  line-height:1.8;
-  max-width:500px;
-}
-
-.concept-card ul{
-  list-style:none;
-  margin-top:25px;
-}
-
-.concept-card li{
-  color:#7e8c95;
-  padding:10px 0;
-  border-top:1px solid var(--line);
-  font:11px "DM Mono";
-}
-
-/* NUMBERING */
-
-.numbering-box{
-  margin-top:80px;
-  border:1px solid var(--line);
-  min-height:400px;
-  position:relative;
-  overflow:hidden;
-  padding:50px;
-  background:
-    radial-gradient(circle at 50% 50%,rgba(99,230,255,.06),transparent 40%);
-}
-
-.numbering-box p{
-  max-width:650px;
-  color:#89979f;
-  line-height:1.8;
-}
-
-.modules{
-  display:flex;
-  gap:14px;
-  position:absolute;
-  bottom:60px;
-  left:50px;
-  right:50px;
-  justify-content:center;
-  flex-wrap:wrap;
-}
-
-.module{
-  width:120px;
-  height:70px;
-  border:1px solid rgba(99,230,255,.25);
-  background:rgba(99,230,255,.03);
-  position:relative;
-}
-
-.module:before,
-.module:after{
-  content:"";
-  position:absolute;
-  top:50%;
-  width:20px;
-  height:2px;
-  background:var(--cyan);
-}
-
-.module:before{left:-20px}
-.module:after{right:-20px}
-
-/* GLOSSARY */
-
-.glossary-grid{
-  margin-top:80px;
+.map{
   display:grid;
   grid-template-columns:repeat(3,1fr);
   gap:12px;
+  align-items:center;
 }
 
-.glossary-item{
+.map-node{
+  padding:20px;
   border:1px solid var(--line);
-  padding:28px;
-  min-height:180px;
+  border-radius:16px;
+  text-align:center;
+  background:var(--card);
 }
 
-.glossary-item .num{
-  color:var(--cyan);
-  font:10px "DM Mono";
+.map-node.main{
+  grid-column:2;
+  border-color:var(--accent);
+  background:rgba(77,225,193,.08);
 }
 
-.glossary-item h3{
-  margin:25px 0 12px;
-  font-size:17px;
-}
-
-.glossary-item p{
-  color:#7f8d96;
-  line-height:1.7;
-  font-size:13px;
+.map-node.arrow-node{
+  border-style:dashed;
+  color:var(--muted);
 }
 
 /* REFERENCES */
 
-.reference-list{
-  margin-top:80px;
-  border-top:1px solid var(--line);
-}
-
 .reference{
-  display:grid;
-  grid-template-columns:70px 1fr;
-  gap:20px;
-  padding:28px 0;
-  border-bottom:1px solid var(--line);
+  display:block;
+  padding:16px;
+  margin:10px 0;
+  border:1px solid var(--line);
+  border-radius:13px;
+  text-decoration:none;
+  background:var(--card);
 }
 
-.reference-number{
-  color:var(--cyan);
-  font:11px "DM Mono";
+.reference:hover{
+  border-color:var(--accent);
 }
 
-.reference-text{
-  color:#89979f;
-  line-height:1.8;
-  font-size:14px;
+.reference strong{
+  display:block;
 }
 
-.reference-text strong{
-  color:var(--white);
+.reference span{
+  color:var(--muted);
+  font-size:.82rem;
 }
-
-/* FOOTER */
 
 footer{
+  padding:60px 0;
   border-top:1px solid var(--line);
-  padding:50px 0;
+  color:var(--muted);
+  text-align:center;
 }
 
-.footer-inner{
-  display:flex;
-  justify-content:space-between;
-  gap:30px;
-  color:#64727a;
-  font:10px "DM Mono";
-  letter-spacing:.08em;
-}
-
-.footer-title{
-  color:var(--white);
-}
-
-/* RTL */
-
-html[dir="rtl"] body{
-  font-family:Inter,"Arial",sans-serif;
-}
-
-html[dir="rtl"] .eyebrow{
-  flex-direction:row-reverse;
-  justify-content:flex-start;
-}
-
-html[dir="rtl"] .anatomy-info{
-  border-left:none;
-  border-right:1px solid var(--line);
-  padding-left:0;
-  padding-right:40px;
-}
-
-html[dir="rtl"] .reference{
-  grid-template-columns:70px 1fr;
-}
-
-html[dir="rtl"] .concept-card ul{
-  padding-right:0;
-}
-
-html[dir="rtl"] th,
-html[dir="rtl"] td{
-  text-align:right;
-}
-
-/* MOBILE */
-
-@media(max-width:1100px){
-
-  .nav-links{
-    display:none;
-  }
-
-  .menu-btn{
-    display:block;
-  }
-
-  .hero-chip{
-    opacity:.4;
-    right:-20%;
-    width:75vw;
-  }
-
-  .process{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .parameter-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .green-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .material-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-
-  .application-grid{
-    grid-template-columns:repeat(2,1fr);
-  }
-}
-
-@media(max-width:750px){
-
-  .container{
-    width:min(var(--max),calc(100% - 35px));
-  }
-
-  header{
-    padding:15px 0;
-  }
-
-  .hero{
-    min-height:850px;
-  }
-
-  .hero-title{
-    font-size:65px;
-    max-width:100%;
-  }
-
-  .hero-chip{
-    width:105vw;
-    right:-40%;
-    opacity:.25;
-  }
-
-  .hero-actions{
-    flex-wrap:wrap;
-  }
-
-  .flow-section,
-  .chip-section,
-  .diffusion-section,
-  .simulator,
-  .parameters,
-  .transfer,
-  .green-section,
-  .comparison,
-  .materials,
-  .applications,
-  .distinction,
-  .numbering,
-  .glossary,
-  .references{
-    padding:110px 0;
-  }
-
-  .process,
-  .parameter-grid,
-  .green-grid,
-  .material-grid,
-  .application-grid,
-  .glossary-grid,
-  .distinction-grid,
-  .transfer-grid,
-  .diffusion-grid,
-  .sim-grid,
-  .anatomy-wrap{
+@media(max-width:900px){
+  .hero-grid,
+  .grid-2,
+  .simulator{
     grid-template-columns:1fr;
   }
 
-  .process-card{
-    min-height:220px;
+  .grid-3{
+    grid-template-columns:1fr 1fr;
   }
 
-  .anatomy-info{
-    border-left:none;
-    border-right:none;
-    border-top:1px solid var(--line);
-    padding:35px 0 0;
+  .timeline{
+    grid-template-columns:1fr 1fr;
   }
 
-  html[dir="rtl"] .anatomy-info{
-    border-right:none;
-    padding-right:0;
+  .metrics{
+    grid-template-columns:1fr 1fr;
   }
 
-  .zoom-stage{
-    height:60vh;
+  .map{
+    grid-template-columns:1fr 1fr;
   }
 
-  .zoom-visual{
-    width:100%;
-    height:300px;
+  .map-node.main{
+    grid-column:1/-1;
   }
+}
 
-  .sim-screen{
-    min-height:350px;
-  }
-
-  .modules{
-    left:25px;
-    right:25px;
-    bottom:30px;
-  }
-
-  .module{
-    width:85px;
-    height:55px;
-  }
-
-  .module:before,
-  .module:after{
+@media(max-width:600px){
+  nav{
     display:none;
   }
 
-  .footer-inner{
-    flex-direction:column;
+  .hero{
+    min-height:560px;
   }
 
-  h2{
-    font-size:50px;
+  .grid-3{
+    grid-template-columns:1fr;
+  }
+
+  .metrics{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .chip{
+    height:300px;
+  }
+
+  #reactorCanvas{
+    height:300px;
+  }
+}
+
+@media(prefers-reduced-motion:reduce){
+  html{
+    scroll-behavior:auto;
   }
 }
 </style>
@@ -1595,187 +643,65 @@ html[dir="rtl"] td{
 
 <body>
 
-<header id="header">
+<header>
   <div class="container nav">
-
-    <a href="#top" class="logo">
-      <div class="logo-mark"></div>
-      <span>MRT / 01</span>
-    </a>
-
-    <nav class="nav-links">
-      <a href="#what" data-en="WHAT" data-ar="ما هو؟">WHAT</a>
-      <a href="#chip" data-en="CHIP" data-ar="الشريحة">CHIP</a>
-      <a href="#mixing" data-en="MIXING" data-ar="الخلط">MIXING</a>
-      <a href="#simulator" data-en="SIMULATOR" data-ar="المحاكي">SIMULATOR</a>
-      <a href="#applications" data-en="APPLICATIONS" data-ar="التطبيقات">APPLICATIONS</a>
+    <div class="logo">MRT<span>•</span>LAB</div>
+    <nav>
+      <a href="#why">WHY</a>
+      <a href="#inside">INSIDE</a>
+      <a href="#simulation">SIMULATION</a>
+      <a href="#physics">PHYSICS</a>
+      <a href="#applications">APPLICATIONS</a>
+      <a href="#references">REFERENCES</a>
     </nav>
-
-    <div class="nav-right">
-      <button class="lang" id="langBtn">AR / EN</button>
-      <button class="menu-btn" onclick="window.scrollTo({top:0,behavior:'smooth'})">
-        MENU
-      </button>
-    </div>
-
   </div>
 </header>
 
-<main id="top">
+<main>
 
 <!-- HERO -->
-
 <section class="hero">
+  <div class="container hero-grid">
 
-  <div class="hero-grid"></div>
+    <div>
+      <div class="eyebrow">MICROREACTOR TECHNOLOGY / MRT</div>
 
-  <div class="container hero-content">
+      <h1>
+        THINK<br>
+        SMALL.<br>
+        REACT<br>
+        SMART.
+      </h1>
 
-    <div class="eyebrow" data-en="SCIENTIFIC TECHNOLOGY / 01" data-ar="تقنية علمية / 01">
-      SCIENTIFIC TECHNOLOGY / 01
+      <p>
+        An interactive scientific journey into what actually happens
+        inside a microreactor — from fluid flow and mixing to diffusion,
+        heat transfer, reaction kinetics and product formation.
+      </p>
+
+      <div class="cta-row">
+        <a class="btn primary" href="#simulation">
+          RUN THE SIMULATION →
+        </a>
+
+        <a class="btn" href="#inside">
+          EXPLORE INSIDE
+        </a>
+      </div>
     </div>
 
-    <h1 class="hero-title">
-      MICROREACTOR<br>
-      <span class="outline">TECHNOLOGY</span>
-    </h1>
+    <div class="hero-chip">
 
-    <p class="hero-sub"
-       data-en="Explore how chemical reactions can be performed inside microscale channels, where controlled mixing, short diffusion paths, heat transfer and precise flow control shape chemical processing."
-       data-ar="اكتشف كيف يمكن تنفيذ التفاعلات الكيميائية داخل قنوات متناهية الصغر، حيث يساهم الخلط المتحكم فيه، وقِصر مسارات الانتشار، وانتقال الحرارة والتحكم الدقيق في التدفق في تطوير العمليات الكيميائية.">
-      Explore how chemical reactions can be performed inside microscale channels, where controlled mixing, short diffusion paths, heat transfer and precise flow control shape chemical processing.
-    </p>
-
-    <div class="hero-actions">
-      <a class="btn primary" href="#chip"
-         data-en="ENTER THE MICROREACTOR →"
-         data-ar="ادخل إلى المفاعل الدقيق ←">
-        ENTER THE MICROREACTOR →
-      </a>
-
-      <a class="btn" href="#what"
-         data-en="EXPLORE THE CONCEPT"
-         data-ar="استكشف المفهوم">
-        EXPLORE THE CONCEPT
-      </a>
-    </div>
-
-  </div>
-
-  <div class="hero-chip">
-
-    <div class="chip-body">
-
-      <div class="chip-label">MRT / MICROREACTOR CHIP / CONCEPTUAL MODEL</div>
-
-      <div class="port a"></div>
-      <div class="port b"></div>
-      <div class="port out"></div>
-
-      <div class="channels">
+      <div class="chip">
         <div class="channel c1"></div>
         <div class="channel c2"></div>
-        <div class="channel c3"></div>
-        <div class="channel c4"></div>
-        <div class="channel c5"></div>
 
-        <div class="reaction-zone"></div>
-
-        <div class="particle p1"></div>
-        <div class="particle green p2"></div>
-        <div class="particle p3"></div>
-        <div class="particle green p4"></div>
+        <div class="port p1"></div>
+        <div class="port p2"></div>
       </div>
 
-      <div class="floating-label fl1">OUTLET</div>
-      <div class="floating-label fl2">INLET A / B</div>
-      <div class="floating-label fl3">REACTION ZONE</div>
-
-    </div>
-
-  </div>
-
-  <div class="scroll-indicator">SCROLL TO EXPLORE</div>
-
-</section>
-
-
-<!-- WHAT -->
-
-<section class="flow-section" id="what">
-
-  <div class="container">
-
-    <div class="eyebrow" data-en="01 / WHAT IS MRT?" data-ar="01 / ما هي تقنية MRT؟">
-      01 / WHAT IS MRT?
-    </div>
-
-    <h2 data-en="A REACTOR.<br><span>REDUCED TO ITS PATHWAYS.</span>"
-        data-ar="مفاعل كيميائي.<br><span>مصغّر إلى مساراته.</span>">
-      A REACTOR.<br>
-      <span>REDUCED TO ITS PATHWAYS.</span>
-    </h2>
-
-    <p class="section-copy"
-       data-en="Microreactors typically contain channels with characteristic dimensions below approximately 1 mm, although the exact definition can vary with reactor design and application. Fluids move through engineered pathways where mixing, heat transfer and chemical reactions can be controlled at small scales."
-       data-ar="تحتوي المفاعلات الدقيقة عادةً على قنوات ذات أبعاد مميزة أقل تقريبًا من 1 مم، مع اختلاف التعريف الدقيق حسب تصميم المفاعل وتطبيقه. تتحرك الموائع داخل مسارات مصممة هندسيًا تسمح بالتحكم في الخلط وانتقال الحرارة والتفاعلات الكيميائية على نطاق صغير.">
-      Microreactors typically contain channels with characteristic dimensions below approximately 1 mm, although the exact definition can vary with reactor design and application. Fluids move through engineered pathways where mixing, heat transfer and chemical reactions can be controlled at small scales.
-    </p>
-
-    <div class="process">
-
-      <div class="process-card">
-        <div class="process-number">01</div>
-        <div class="process-icon">
-          <div class="flow-lines">
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-          </div>
-        </div>
-        <div class="process-name" data-en="REACTANTS" data-ar="المتفاعلات">REACTANTS</div>
-      </div>
-
-      <div class="process-card">
-        <div class="process-number">02</div>
-        <div class="process-icon">
-          <div class="flow-lines">
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-          </div>
-        </div>
-        <div class="process-name" data-en="MICROCHANNEL" data-ar="القناة الدقيقة">MICROCHANNEL</div>
-      </div>
-
-      <div class="process-card">
-        <div class="process-number">03</div>
-        <div class="process-icon">
-          <div class="flow-lines">
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-            <div class="flow-line"></div>
-          </div>
-        </div>
-        <div class="process-name" data-en="MIXING" data-ar="الخلط">MIXING</div>
-      </div>
-
-      <div class="process-card">
-        <div class="process-number">04</div>
-        <div class="process-icon">
-          <div class="reaction-zone" style="position:absolute;left:40%;top:20%;width:70px;"></div>
-        </div>
-        <div class="process-name" data-en="REACTION" data-ar="التفاعل">REACTION</div>
-      </div>
-
-      <div class="process-card">
-        <div class="process-number">05</div>
-        <div class="process-icon">
-          <div class="flow-lines">
-            <div class="flow-line"></div>
-          </div>
-        </div>
-        <div class="process-name" data-en="PRODUCT" data-ar="الناتج">PRODUCT</div>
+      <div style="margin-top:18px">
+        <span class="tag">MICROSCALE REACTION ENVIRONMENT</span>
       </div>
 
     </div>
@@ -1784,1061 +710,1212 @@ html[dir="rtl"] td{
 </section>
 
 
-<!-- CHIP ANATOMY -->
+<!-- WHY -->
+<section class="section" id="why">
 
-<section class="chip-section" id="chip">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="02 / MEET THE CHIP" data-ar="02 / تعرّف على الشريحة">
-      02 / MEET THE CHIP
-    </div>
+<div class="eyebrow">01 / WHY</div>
 
-    <h2 data-en="INSIDE THE<br><span>MICROREACTOR.</span>"
-        data-ar="داخل<br><span>المفاعل الدقيق.</span>">
-      INSIDE THE<br>
-      <span>MICROREACTOR.</span>
-    </h2>
+<h2>Why make the reactor smaller?</h2>
 
-    <div class="anatomy-wrap">
+<p>
+A microreactor is not simply a conventional reactor made smaller.
+Its small characteristic dimensions can change how flow, mixing,
+heat transfer and mass transfer interact with the chemistry.
+The goal is greater control over the reaction environment.
+</p>
 
-      <div class="big-chip">
+</div>
 
-        <svg viewBox="0 0 700 450" fill="none">
+<div class="grid-3">
 
-          <rect x="20" y="20" width="660" height="410" rx="28"
-                stroke="rgba(150,230,255,.35)"/>
+<div class="card">
+<span class="tag">MIXING</span>
+<h3>Shorter diffusion paths</h3>
+<p>
+Microscale dimensions can reduce the distance over which molecules
+need to diffuse. Mixing behavior depends strongly on geometry,
+flow conditions and diffusion.
+</p>
+</div>
 
-          <path d="M55 170 H180 L260 120 H420 L500 170 H645"
-                stroke="#63e6ff"
-                stroke-width="5"
-                stroke-linecap="round"/>
+<div class="card">
+<span class="tag">HEAT</span>
+<h3>Thermal control</h3>
+<p>
+A high surface-area-to-volume ratio can support efficient heat
+exchange and temperature control in suitable microreactor designs.
+</p>
+</div>
 
-          <path d="M55 280 H180 L260 330 H420 L500 280 H645"
-                stroke="#78e6a1"
-                stroke-width="5"
-                stroke-linecap="round"/>
+<div class="card">
+<span class="tag">CONTROL</span>
+<h3>Precise operation</h3>
+<p>
+Flow rate, temperature, residence time and reactor geometry can
+be controlled as design and operating variables.
+</p>
+</div>
 
-          <path d="M420 120 L470 225 L420 330"
-                stroke="#ffbd6b"
-                stroke-width="6"
-                stroke-linecap="round"/>
+</div>
 
-          <circle cx="55" cy="170" r="18"
-                  fill="#061015"
-                  stroke="#63e6ff"/>
+<div class="flow-diagram">
 
-          <circle cx="55" cy="280" r="18"
-                  fill="#061015"
-                  stroke="#78e6a1"/>
+<div class="flow-step">GEOMETRY</div>
+<div class="arrow">→</div>
+<div class="flow-step">FLOW</div>
+<div class="arrow">→</div>
+<div class="flow-step">MIXING</div>
+<div class="arrow">→</div>
+<div class="flow-step">REACTION</div>
+<div class="arrow">→</div>
+<div class="flow-step">PRODUCT</div>
 
-          <circle cx="645" cy="225" r="18"
-                  fill="#061015"
-                  stroke="#ffbd6b"/>
+</div>
 
-          <circle cx="420" cy="225" r="45"
-                  fill="rgba(255,189,107,.07)"
-                  stroke="rgba(255,189,107,.35)"/>
-
-        </svg>
-
-        <button class="hotspot hs1" onclick="showPart(1)">01</button>
-        <button class="hotspot hs2" onclick="showPart(2)">02</button>
-        <button class="hotspot hs3" onclick="showPart(3)">03</button>
-        <button class="hotspot hs4" onclick="showPart(4)">04</button>
-        <button class="hotspot hs5" onclick="showPart(5)">05</button>
-
-      </div>
-
-      <div class="anatomy-info">
-
-        <div class="anatomy-index" id="partIndex">01 / INLET</div>
-
-        <div class="anatomy-title" id="partTitle">
-          Reactant Inlet
-        </div>
-
-        <p class="anatomy-desc" id="partDesc">
-          Fluids enter the microreactor through defined inlet ports before being guided into the microscale channel network.
-        </p>
-
-        <div class="anatomy-tags" id="partTags">
-          <div class="tag">FLOW</div>
-          <div class="tag">MICROSCALE</div>
-          <div class="tag">CONTROL</div>
-        </div>
-
-      </div>
-
-    </div>
-
-  </div>
+</div>
 </section>
 
 
-<!-- ZOOM -->
+<!-- DEFINITION -->
+<section class="section">
 
-<section class="zoom-section">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="03 / MICRO → MOLECULE" data-ar="03 / من المفاعل → إلى الجزيء">
-      03 / MICRO → MOLECULE
-    </div>
+<div class="eyebrow">02 / WHAT</div>
 
-    <h2 data-en="ZOOM INTO<br><span>THE REACTION.</span>"
-        data-ar="تعمّق في<br><span>التفاعل.</span>">
-      ZOOM INTO<br>
-      <span>THE REACTION.</span>
-    </h2>
+<h2>What is a microreactor?</h2>
 
-    <div class="zoom-stage">
+<p>
+Microreactors are chemical reaction devices with small internal
+dimensions, often involving microchannels. Exact definitions vary
+with design and application.
+</p>
 
-      <div class="zoom-stage-text">
-        <span id="zoomLabel">CHIP SCALE</span>
-        <strong id="zoomTitle">MICROREACTOR</strong>
-      </div>
+</div>
 
-      <div class="zoom-visual" id="zoomVisual">
+<div class="grid-2">
 
-        <div class="zoom-channel"></div>
+<div class="card">
 
-        <div class="diffusion-particles">
+<h3>MICROREACTOR</h3>
 
-          <div class="diff-p" style="left:18%;top:48%"></div>
-          <div class="diff-p" style="left:25%;top:51%"></div>
-          <div class="diff-p" style="left:31%;top:46%"></div>
-          <div class="diff-p green" style="left:58%;top:49%"></div>
-          <div class="diff-p green" style="left:65%;top:53%"></div>
-          <div class="diff-p green" style="left:72%;top:47%"></div>
+<p>
+A deliberately engineered reaction environment where fluid flow,
+mixing, heat transfer, mass transfer, residence time and chemistry
+are controlled at small scales.
+</p>
 
-        </div>
+<div class="equation">
+τ = V / Q
+</div>
 
-        <div class="zoom-caption">
-          DEVICE → CHANNEL → MIXING → MOLECULAR TRANSPORT
-        </div>
+<p>
+The equation above gives the nominal residence time for a continuous
+flow system when reactor volume <b>V</b> and volumetric flow rate
+<b>Q</b> are used consistently.
+</p>
 
-      </div>
+</div>
 
-    </div>
+<div class="card">
 
-  </div>
+<h3>IMPORTANT DISTINCTION</h3>
+
+<p>
+Microfluidics is a broader field concerned with manipulating fluids
+at small scales. A microreactor is specifically used as a reaction
+environment.
+</p>
+
+<div class="note">
+Microfluidics → broader platform.<br>
+Microreactor → reaction-focused system.
+</div>
+
+</div>
+
+</div>
+
+</div>
 </section>
 
 
-<!-- MIXING -->
+<!-- INSIDE -->
+<section class="section" id="inside">
 
-<section class="diffusion-section" id="mixing">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="04 / MICROMIXING" data-ar="04 / الخلط الدقيق">
-      04 / MICROMIXING
-    </div>
+<div class="eyebrow">03 / INSIDE THE CHANNEL</div>
 
-    <h2 data-en="SHORTER PATHS.<br><span>FASTER MIXING.</span>"
-        data-ar="مسارات أقصر.<br><span>خلط أسرع.</span>">
-      SHORTER PATHS.<br>
-      <span>FASTER MIXING.</span>
-    </h2>
+<h2>What actually happens inside?</h2>
 
-    <p class="section-copy"
-       data-en="At microscale dimensions, molecules may need to travel only short distances before mixing. Diffusion can therefore play an important role in micromixing, while the actual mixing behavior also depends on flow conditions and reactor geometry."
-       data-ar="عند الأبعاد الميكروسكوبية، قد تحتاج الجزيئات إلى قطع مسافات قصيرة فقط قبل حدوث الخلط. لذلك يمكن أن يلعب الانتشار دورًا مهمًا في الخلط الدقيق، مع اعتماد سلوك الخلط الفعلي أيضًا على ظروف الجريان وهندسة المفاعل.">
-      At microscale dimensions, molecules may need to travel only short distances before mixing. Diffusion can therefore play an important role in micromixing, while the actual mixing behavior also depends on flow conditions and reactor geometry.
-    </p>
+<p>
+This is the heart of the technology. The reactor does not magically
+“make” a reaction happen. It creates a controlled environment in
+which reactants can mix, exchange heat and mass, and react according
+to their chemistry.
+</p>
 
-    <div class="diffusion-grid">
+</div>
 
-      <div class="diffusion-box" id="diffusionBox">
+<div class="timeline">
 
-        <div class="interface"></div>
+<button class="stage active" data-stage="0">
+01<br>Molecules enter
+</button>
 
-        <div class="concept-label label-left"
-             data-en="HIGH CONCENTRATION"
-             data-ar="تركيز مرتفع">
-          HIGH CONCENTRATION
-        </div>
+<button class="stage" data-stage="1">
+02<br>Mixing
+</button>
 
-        <div class="concept-label label-right"
-             data-en="LOW CONCENTRATION"
-             data-ar="تركيز منخفض">
-          LOW CONCENTRATION
-        </div>
+<button class="stage" data-stage="2">
+03<br>Diffusion
+</button>
 
-      </div>
+<button class="stage" data-stage="3">
+04<br>Reaction
+</button>
 
-      <div>
+<button class="stage" data-stage="4">
+05<br>Product exits
+</button>
 
-        <button class="btn primary" onclick="runDiffusion()"
-                data-en="PLAY MIXING"
-                data-ar="تشغيل الخلط">
-          PLAY MIXING
-        </button>
+</div>
 
-        <p class="section-copy"
-           data-en="The visualization is conceptual. It illustrates the movement of molecules across a concentration gradient and is not a molecular-scale simulation."
-           data-ar="هذا التصوير توضيحي ومفاهيمي، ويشرح حركة الجزيئات عبر تدرج في التركيز، ولا يمثل محاكاة فعلية على المستوى الجزيئي.">
-          The visualization is conceptual. It illustrates the movement of molecules across a concentration gradient and is not a molecular-scale simulation.
-        </p>
+<div class="card stage-content" id="stageContent">
 
-      </div>
+<h3>01 — Molecules enter</h3>
 
-    </div>
+<p>
+Reactant streams enter the microreactor through one or more inlet
+channels. Their subsequent behavior depends on the geometry,
+flow rate, fluid properties and operating conditions.
+</p>
 
-  </div>
+</div>
+
+</div>
 </section>
 
 
-<!-- SIMULATOR -->
+<!-- SIMULATION -->
+<section class="section" id="simulation">
 
-<section class="simulator" id="simulator">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="05 / LIVE REACTION SIMULATOR" data-ar="05 / محاكي التفاعل">
-      05 / LIVE REACTION SIMULATOR
-    </div>
+<div class="eyebrow">04 / INTERACTIVE SIMULATION</div>
 
-    <h2 data-en="RUN THE<br><span>REACTION.</span>"
-        data-ar="شغّل<br><span>التفاعل.</span>">
-      RUN THE<br>
-      <span>REACTION.</span>
-    </h2>
+<h2>Build your reaction environment.</h2>
 
-    <p class="section-copy"
-       data-en="An interactive conceptual model showing how flow rate affects the nominal residence time for a fixed reactor volume."
-       data-ar="نموذج تفاعلي توضيحي يوضح كيف يؤثر معدل التدفق في زمن المكوث الاسمي عند ثبات حجم المفاعل.">
-      An interactive conceptual model showing how flow rate affects the nominal residence time for a fixed reactor volume.
-    </p>
+<p>
+Change the operating conditions and observe how the educational
+model responds. The particles are a visualization — not a CFD
+solution — but the displayed engineering relationships use the
+corresponding physical equations where applicable.
+</p>
 
-    <div class="sim-grid">
+</div>
 
-      <div class="sim-screen" id="simScreen">
+<div class="simulator">
 
-        <div class="sim-channel"></div>
+<div class="card controls">
 
-        <div class="sim-zone"></div>
+<h3>CONTROL PANEL</h3>
 
-      </div>
+<div class="control">
 
-      <div class="sim-panel">
+<label>
+Flow rate
+<output id="flowValue">1.00 mL/min</output>
+</label>
 
-        <div class="status" id="status"
-             data-en="READY"
-             data-ar="جاهز">
-          READY
-        </div>
+<input
+id="flow"
+type="range"
+min="0.1"
+max="5"
+step="0.1"
+value="1"
+/>
 
-        <div class="control">
+</div>
 
-          <label>
-            <span data-en="FLOW RATE" data-ar="معدل التدفق">FLOW RATE</span>
-            <span id="flowValue">1.0 mL/min</span>
-          </label>
 
-          <input
-            type="range"
-            id="flowSlider"
-            min="0.2"
-            max="5"
-            step="0.1"
-            value="1"
-          >
+<div class="control">
 
-        </div>
+<label>
+Channel width
+<output id="widthValue">500 µm</output>
+</label>
 
-        <div class="control">
+<input
+id="width"
+type="range"
+min="100"
+max="1000"
+step="50"
+value="500"
+/>
 
-          <label>
-            <span data-en="TEMPERATURE" data-ar="درجة الحرارة">TEMPERATURE</span>
-            <span id="tempValue">25 °C</span>
-          </label>
+</div>
 
-          <input
-            type="range"
-            id="tempSlider"
-            min="20"
-            max="100"
-            step="1"
-            value="25"
-          >
 
-        </div>
+<div class="control">
 
-        <div class="metric">
-          <span data-en="RESIDENCE TIME" data-ar="زمن المكوث">
-            RESIDENCE TIME
-          </span>
-          <span id="residence">2.1 s</span>
-        </div>
+<label>
+Temperature
+<output id="tempValue">298 K</output>
+</label>
 
-        <div class="metric">
-          <span data-en="CHANNEL WIDTH" data-ar="عرض القناة">
-            CHANNEL WIDTH
-          </span>
-          <span>0.5 mm</span>
-        </div>
+<input
+id="temperature"
+type="range"
+min="273"
+max="373"
+step="1"
+value="298"
+/>
 
-        <div class="metric">
-          <span data-en="REACTION VOLUME" data-ar="حجم المفاعل">
-            REACTION VOLUME
-          </span>
-          <span>35 µL</span>
-        </div>
+</div>
 
-        <div class="sim-buttons">
 
-          <button class="btn primary" onclick="runReaction()"
-                  data-en="RUN"
-                  data-ar="تشغيل">
-            RUN
-          </button>
+<div class="control">
 
-          <button class="btn" onclick="pauseReaction()"
-                  data-en="PAUSE"
-                  data-ar="إيقاف">
-            PAUSE
-          </button>
+<label>
+Reaction rate factor
+<output id="rateValue">1.0×</output>
+</label>
 
-          <button class="btn" onclick="resetReaction()"
-                  data-en="RESET"
-                  data-ar="إعادة">
-            RESET
-          </button>
+<input
+id="rate"
+type="range"
+min="0.2"
+max="3"
+step="0.1"
+value="1"
+/>
 
-        </div>
+</div>
 
-      </div>
 
-    </div>
+<button class="btn primary" id="runBtn">
+▶ RUN / PAUSE
+</button>
 
-  </div>
+<button class="btn" id="resetBtn">
+↻ RESET
+</button>
+
+<div class="note">
+<b>Educational model:</b> The reaction model is illustrative.
+Real chemical systems require experimentally determined kinetic
+parameters and validated reactor models.
+</div>
+
+</div>
+
+
+<div class="sim-visual">
+
+<canvas id="reactorCanvas"></canvas>
+
+<div class="legend">
+<span><i class="dot a"></i> Reactant A</span>
+<span><i class="dot b"></i> Reactant B</span>
+<span><i class="dot c"></i> Product C</span>
+</div>
+
+<div class="metrics">
+
+<div class="metric">
+<small>RESIDENCE TIME</small>
+<strong id="residence">2.1 s</strong>
+</div>
+
+<div class="metric">
+<small>REYNOLDS NUMBER*</small>
+<strong id="reynolds">0.00</strong>
+</div>
+
+<div class="metric">
+<small>MIXING INDEX*</small>
+<strong id="mixing">0%</strong>
+</div>
+
+<div class="metric">
+<small>RATE FACTOR*</small>
+<strong id="rateOutput">1.00×</strong>
+</div>
+
+</div>
+
+<p style="color:var(--muted);font-size:.75rem;margin-top:12px">
+*Educational indicators based on simplified assumptions.
+Reynolds number uses water-like reference properties.
+</p>
+
+</div>
+
+</div>
+
+</div>
 </section>
 
 
-<!-- PARAMETERS -->
+<!-- PHYSICS -->
+<section class="section" id="physics">
 
-<section class="parameters">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="06 / MICROREACTOR PARAMETERS" data-ar="06 / معايير المفاعل الدقيق">
-      06 / MICROREACTOR PARAMETERS
-    </div>
+<div class="eyebrow">05 / PHYSICS + CHEMISTRY</div>
 
-    <h2 data-en="CONTROL<br><span>THE PROCESS.</span>"
-        data-ar="تحكم في<br><span>العملية.</span>">
-      CONTROL<br>
-      <span>THE PROCESS.</span>
-    </h2>
+<h2>The equations behind the experience.</h2>
 
-    <div class="parameter-grid">
+<p>
+A microreactor connects fluid mechanics, transport phenomena and
+reaction kinetics. The equations below are simplified educational
+forms used to explain the underlying ideas.
+</p>
 
-      <div class="parameter">
-        <div class="eyebrow">FLOW RATE</div>
-        <div class="value">1.0</div>
-        <small>mL / min · ILLUSTRATIVE</small>
-      </div>
+</div>
 
-      <div class="parameter">
-        <div class="eyebrow">CHANNEL WIDTH</div>
-        <div class="value">0.5</div>
-        <small>mm · ILLUSTRATIVE</small>
-      </div>
 
-      <div class="parameter">
-        <div class="eyebrow">REACTION VOLUME</div>
-        <div class="value">35</div>
-        <small>µL · ILLUSTRATIVE</small>
-      </div>
+<div class="grid-2">
 
-      <div class="parameter">
-        <div class="eyebrow">TEMPERATURE</div>
-        <div class="value">25°</div>
-        <small>C · ILLUSTRATIVE</small>
-      </div>
+<div class="card">
 
-    </div>
+<h3>Residence time</h3>
 
-    <p class="material-note"
-       data-en="These values are illustrative rather than representative of one universal microreactor. Actual operating parameters depend on reactor geometry, chemistry, materials, pressure and process objectives."
-       data-ar="هذه القيم توضيحية وليست ممثلة لمفاعل دقيق واحد بشكل عام. تعتمد ظروف التشغيل الفعلية على هندسة المفاعل، والكيمياء المستخدمة، والمواد، والضغط وأهداف العملية.">
-      These values are illustrative rather than representative of one universal microreactor. Actual operating parameters depend on reactor geometry, chemistry, materials, pressure and process objectives.
-    </p>
+<div class="equation">
+τ = V / Q
+</div>
 
-  </div>
+<p>
+The nominal time spent by the flowing material inside a reactor
+depends on reactor volume and volumetric flow rate.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Reynolds number</h3>
+
+<div class="equation">
+Re = ρuD<sub>h</sub> / μ
+</div>
+
+<p>
+Reynolds number compares inertial and viscous effects. In
+microfluidic systems, viscous effects can be important and many
+systems operate at relatively low Reynolds numbers.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Illustrative reaction kinetics</h3>
+
+<div class="equation">
+−r<sub>A</sub> = k C<sub>A</sub>C<sub>B</sub>
+</div>
+
+<p>
+This represents an illustrative bimolecular rate law. It is not a
+universal equation for all reactions.
+</p>
+
+</div>
+
+
+<div class="card">
+
+<h3>Arrhenius relationship</h3>
+
+<div class="equation">
+k = A e<sup>−E<sub>a</sub>/RT</sup>
+</div>
+
+<p>
+The Arrhenius relationship illustrates the dependence of a kinetic
+rate constant on temperature for many chemical reactions.
+</p>
+
+</div>
+
+</div>
+
+
+<div class="card" style="margin-top:25px">
+
+<h3>Residence time ≠ mixing time ≠ reaction time</h3>
+
+<div class="flow-diagram">
+
+<div class="flow-step">
+MIXING TIME<br>
+<span style="color:var(--muted)">transport</span>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="flow-step">
+REACTION TIME<br>
+<span style="color:var(--muted)">kinetics</span>
+</div>
+
+<div class="arrow">→</div>
+
+<div class="flow-step">
+RESIDENCE TIME<br>
+<span style="color:var(--muted)">flow</span>
+</div>
+
+</div>
+
+<div class="note warning">
+These timescales interact. Whether a reaction is limited by mixing,
+reaction kinetics or residence time depends on the particular
+chemistry and operating conditions.
+</div>
+
+</div>
+
+</div>
 </section>
 
 
-<!-- TRANSPORT -->
+<!-- HEAT -->
+<section class="section">
 
-<section class="transfer">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="07 / TRANSPORT" data-ar="07 / الانتقال">
-      07 / TRANSPORT
-    </div>
+<div class="eyebrow">06 / HEAT TRANSFER</div>
 
-    <h2 data-en="CONTROL<br><span>THE HEAT.</span>"
-        data-ar="تحكم في<br><span>الحرارة.</span>">
-      CONTROL<br>
-      <span>THE HEAT.</span>
-    </h2>
+<h2>Where does the heat go?</h2>
 
-    <p class="section-copy"
-       data-en="Microscale channels can provide a high surface-area-to-volume ratio, which can support efficient heat exchange and thermal control. Actual performance depends on geometry, materials and operating conditions."
-       data-ar="يمكن للقنوات الميكروسكوبية أن توفر نسبة مرتفعة من مساحة السطح إلى الحجم، مما قد يدعم كفاءة تبادل الحرارة والتحكم الحراري. ويعتمد الأداء الفعلي على الهندسة والمواد وظروف التشغيل.">
-      Microscale channels can provide a high surface-area-to-volume ratio, which can support efficient heat exchange and thermal control. Actual performance depends on geometry, materials and operating conditions.
-    </p>
+<p>
+Small channels can provide a high surface-area-to-volume ratio,
+which can support efficient heat exchange. This is one reason
+microreactors can offer strong thermal control when properly designed.
+</p>
 
-    <div class="transfer-grid">
+</div>
 
-      <div class="transfer-card">
+<div class="grid-2">
 
-        <h3 data-en="HEAT TRANSFER" data-ar="انتقال الحرارة">
-          HEAT TRANSFER
-        </h3>
+<div class="card">
 
-        <p data-en="High surface-area-to-volume ratios can support rapid thermal exchange in appropriately designed microscale systems."
-           data-ar="يمكن لنسبة مساحة السطح إلى الحجم المرتفعة أن تدعم تبادلًا حراريًا فعالًا في الأنظمة الميكروسكوبية المصممة بشكل مناسب.">
-          High surface-area-to-volume ratios can support rapid thermal exchange in appropriately designed microscale systems.
-        </p>
+<div class="heat-map" id="heatMap">
 
-        <div class="transfer-visual">
-          <div class="transfer-line"></div>
-          <div class="transfer-dot"></div>
-        </div>
+<div class="heat-channel"></div>
 
-      </div>
+<div class="heat-label hot-label">
+REACTION ZONE
+</div>
 
-      <div class="transfer-card">
+<div class="heat-label cool-label">
+COOLANT / HEAT SINK
+</div>
 
-        <h3 data-en="MASS TRANSFER" data-ar="انتقال الكتلة">
-          MASS TRANSFER
-        </h3>
+</div>
 
-        <p data-en="Shorter diffusion paths can reduce the distance over which species must travel, supporting mass transfer and micromixing."
-           data-ar="يمكن لقِصر مسارات الانتشار أن يقلل المسافة التي تحتاج الأنواع الكيميائية إلى قطعها، مما يدعم انتقال الكتلة والخلط الدقيق.">
-          Shorter diffusion paths can reduce the distance over which species must travel, supporting mass transfer and micromixing.
-        </p>
+</div>
 
-        <div class="transfer-visual">
-          <div class="transfer-line"></div>
-          <div class="transfer-dot" style="animation-delay:1s"></div>
-        </div>
+<div class="card">
 
-      </div>
+<h3>Temperature control matters</h3>
 
-    </div>
+<p>
+Temperature affects reaction kinetics and can also influence
+selectivity, stability and safety depending on the chemistry.
+</p>
 
-  </div>
+<label style="color:var(--muted)">
+Temperature
+
+<input
+id="heatSlider"
+type="range"
+min="273"
+max="373"
+value="298"
+style="width:100%;margin-top:15px"
+>
+
+</label>
+
+<div class="metric" style="margin-top:15px">
+
+<small>THERMAL CONDITION</small>
+
+<strong id="thermalText">
+MILD
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
 </section>
 
 
-<!-- GREEN CHEMISTRY -->
+<!-- MASS TRANSFER -->
+<section class="section">
 
-<section class="green-section">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="08 / GREEN CHEMISTRY" data-ar="08 / الكيمياء الخضراء">
-      08 / GREEN CHEMISTRY
-    </div>
+<div class="eyebrow">07 / MASS TRANSFER</div>
 
-    <h2 data-en="WHY GO<br><span>MICRO?</span>"
-        data-ar="لماذا<br><span>النطاق الدقيق؟</span>">
-      WHY GO<br>
-      <span>MICRO?</span>
-    </h2>
+<h2>Shorter diffusion paths.</h2>
 
-    <p class="section-copy"
-       data-en="Microreactor technology is not automatically “green”. However, when the complete process is appropriately designed, microscale processing can support more resource-efficient chemistry."
-       data-ar="تقنية المفاعلات الدقيقة ليست خضراء تلقائيًا. ولكن عند تصميم العملية كاملةً بطريقة مناسبة، يمكن للمعالجة على النطاق الميكروسكوبي أن تدعم كيمياء أكثر كفاءة في استخدام الموارد.">
-      Microreactor technology is not automatically “green”. However, when the complete process is appropriately designed, microscale processing can support more resource-efficient chemistry.
-    </p>
+<p>
+At small scales, the characteristic distance over which molecules
+must diffuse can become small. The actual mixing performance still
+depends on diffusion coefficients, geometry, flow conditions and
+mixer design.
+</p>
 
-    <div class="green-grid">
+</div>
 
-      <div class="green-card">
-        <div class="number">01</div>
-        <h3 data-en="SMALL MATERIAL QUANTITIES" data-ar="كميات مواد صغيرة">
-          SMALL MATERIAL QUANTITIES
-        </h3>
-        <p data-en="Small reaction volumes can reduce the amount of material present during experimentation and process development."
-           data-ar="يمكن لأحجام التفاعل الصغيرة أن تقلل كمية المواد الموجودة أثناء التجارب وتطوير العمليات.">
-          Small reaction volumes can reduce the amount of material present during experimentation and process development.
-        </p>
-      </div>
+<div class="grid-3">
 
-      <div class="green-card">
-        <div class="number">02</div>
-        <h3 data-en="RAPID MIXING" data-ar="خلط سريع">
-          RAPID MIXING
-        </h3>
-        <p data-en="Microscale pathways can enable short diffusion distances and controlled mixing."
-           data-ar="يمكن للمسارات الميكروسكوبية أن تتيح مسافات انتشار قصيرة وخلطًا متحكمًا فيه.">
-          Microscale pathways can enable short diffusion distances and controlled mixing.
-        </p>
-      </div>
+<div class="card">
 
-      <div class="green-card">
-        <div class="number">03</div>
-        <h3 data-en="HEAT TRANSFER" data-ar="انتقال الحرارة">
-          HEAT TRANSFER
-        </h3>
-        <p data-en="Small dimensions can support efficient thermal exchange in appropriately designed systems."
-           data-ar="يمكن للأبعاد الصغيرة أن تدعم التبادل الحراري الفعال في الأنظمة المصممة بصورة مناسبة.">
-          Small dimensions can support efficient thermal exchange in appropriately designed systems.
-        </p>
-      </div>
+<span class="tag">1</span>
 
-      <div class="green-card">
-        <div class="number">04</div>
-        <h3 data-en="PROCESS CONTROL" data-ar="التحكم في العملية">
-          PROCESS CONTROL
-        </h3>
-        <p data-en="Flow, temperature and residence time can be controlled within a defined reaction environment."
-           data-ar="يمكن التحكم في التدفق ودرجة الحرارة وزمن المكوث داخل بيئة تفاعل محددة.">
-          Flow, temperature and residence time can be controlled within a defined reaction environment.
-        </p>
-      </div>
+<h3>Transport</h3>
 
-    </div>
+<p>
+Molecules move through the fluid by convection and molecular
+diffusion.
+</p>
 
-  </div>
+</div>
+
+<div class="card">
+
+<span class="tag">2</span>
+
+<h3>Interface</h3>
+
+<p>
+A well-designed geometry can increase contact between streams and
+reduce characteristic mixing distances.
+</p>
+
+</div>
+
+<div class="card">
+
+<span class="tag">3</span>
+
+<h3>Reaction</h3>
+
+<p>
+Once reactants occupy the same local region, the chemical kinetics
+determine how quickly they react.
+</p>
+
+</div>
+
+</div>
+
+</div>
+</section>
+
+
+<!-- PRESSURE -->
+<section class="section">
+
+<div class="container">
+
+<div class="section-intro">
+
+<div class="eyebrow">08 / PRESSURE DROP</div>
+
+<h2>Small is not automatically better.</h2>
+
+<p>
+Microreactor design involves trade-offs. Smaller channels can improve
+certain transport characteristics, but flow resistance and pressure
+requirements can also become important.
+</p>
+
+</div>
+
+<div class="grid-2">
+
+<div class="card">
+
+<h3>Channel width</h3>
+
+<input
+id="pressureWidth"
+type="range"
+min="100"
+max="1000"
+value="500"
+style="width:100%"
+>
+
+<div class="metric" style="margin-top:20px">
+
+<small>RELATIVE PRESSURE-DROP INDICATOR</small>
+
+<strong id="pressureValue">1.0×</strong>
+
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>Design balance</h3>
+
+<div class="flow-diagram">
+
+<div class="flow-step">MIXING</div>
+<div class="flow-step">HEAT</div>
+<div class="flow-step">MASS</div>
+<div class="flow-step">PRESSURE</div>
+
+</div>
+
+<p>
+The engineering goal is not to maximize one parameter independently,
+but to design a reactor suitable for the chemistry and operating
+requirements.
+</p>
+
+</div>
+
+</div>
+
+</div>
 </section>
 
 
 <!-- COMPARISON -->
+<section class="section">
 
-<section class="comparison">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="09 / SYSTEM COMPARISON" data-ar="09 / مقارنة الأنظمة">
-      09 / SYSTEM COMPARISON
-    </div>
-
-    <h2 data-en="CONVENTIONAL<br><span>VS MICRO.</span>"
-        data-ar="المفاعل التقليدي<br><span>مقابل الدقيق.</span>">
-      CONVENTIONAL<br>
-      <span>VS MICRO.</span>
-    </h2>
-
-    <div class="table-wrap">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th data-en="PARAMETER" data-ar="المعيار">PARAMETER</th>
-            <th data-en="CONVENTIONAL REACTOR" data-ar="المفاعل التقليدي">
-              CONVENTIONAL REACTOR
-            </th>
-            <th data-en="MICROREACTOR" data-ar="المفاعل الدقيق">
-              MICROREACTOR
-            </th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          <tr>
-            <td data-en="Reaction volume" data-ar="حجم التفاعل">Reaction volume</td>
-            <td data-en="Larger" data-ar="أكبر">Larger</td>
-            <td data-en="Small" data-ar="صغير">Small</td>
-          </tr>
-
-          <tr>
-            <td data-en="Transport distance" data-ar="مسافة الانتقال">Transport distance</td>
-            <td data-en="Longer" data-ar="أطول">Longer</td>
-            <td data-en="Shorter" data-ar="أقصر">Shorter</td>
-          </tr>
-
-          <tr>
-            <td data-en="Flow environment" data-ar="بيئة الجريان">Flow environment</td>
-            <td data-en="Bulk scale" data-ar="نطاق حجمي">Bulk scale</td>
-            <td data-en="Microscale" data-ar="نطاق ميكروسكوبي">Microscale</td>
-          </tr>
-
-          <tr>
-            <td data-en="Thermal exchange" data-ar="التبادل الحراري">Thermal exchange</td>
-            <td data-en="Larger scale" data-ar="على نطاق أكبر">Larger scale</td>
-            <td data-en="High surface/volume potential" data-ar="إمكانات مرتفعة لمساحة السطح/الحجم">
-              High surface/volume potential
-            </td>
-          </tr>
-
-          <tr>
-            <td data-en="Material quantity" data-ar="كمية المواد">Material quantity</td>
-            <td data-en="Higher" data-ar="أعلى">Higher</td>
-            <td data-en="Lower for small-volume systems" data-ar="أقل في الأنظمة صغيرة الحجم">
-              Lower for small-volume systems
-            </td>
-          </tr>
-
-        </tbody>
-
-      </table>
-
-    </div>
-
-  </div>
-</section>
-
-
-<!-- MATERIALS -->
-
-<section class="materials">
-
-  <div class="container">
-
-    <div class="eyebrow" data-en="10 / MATERIALS" data-ar="10 / المواد">
-      10 / MATERIALS
-    </div>
-
-    <h2 data-en="MATERIALS.<br><span>PRECISION.</span>"
-        data-ar="المواد.<br><span>والدقة.</span>">
-      MATERIALS.<br>
-      <span>PRECISION.</span>
-    </h2>
-
-    <p class="section-copy"
-       data-en="Microreactors can be fabricated from different materials. Material selection depends on chemical compatibility, temperature, pressure, mechanical requirements and whether optical access is needed."
-       data-ar="يمكن تصنيع المفاعلات الدقيقة من مواد مختلفة. ويعتمد اختيار المادة على التوافق الكيميائي ودرجة الحرارة والضغط والمتطلبات الميكانيكية والحاجة إلى الوصول البصري.">
-      Microreactors can be fabricated from different materials. Material selection depends on chemical compatibility, temperature, pressure, mechanical requirements and whether optical access is needed.
-    </p>
-
-    <div class="material-grid">
-
-      <div class="material">
-        <h3>BOROSILICATE GLASS</h3>
-        <p data-en="Transparent and useful for optical observation, with good chemical and thermal properties for selected systems."
-           data-ar="شفاف ومفيد للمراقبة البصرية، مع خصائص كيميائية وحرارية مناسبة لبعض الأنظمة.">
-          Transparent and useful for optical observation, with good chemical and thermal properties for selected systems.
-        </p>
-      </div>
-
-      <div class="material">
-        <h3>QUARTZ</h3>
-        <p data-en="A transparent material used where optical access and material compatibility are important."
-           data-ar="مادة شفافة تستخدم عندما تكون الرؤية البصرية والتوافق المادي من الاعتبارات المهمة.">
-          A transparent material used where optical access and material compatibility are important.
-        </p>
-      </div>
-
-      <div class="material">
-        <h3>SILICON</h3>
-        <p data-en="Widely used in microfabrication and microfluidic technologies, especially for precisely structured devices."
-           data-ar="يستخدم على نطاق واسع في تقنيات التصنيع الميكروي والموائع الدقيقة، خصوصًا للأجهزة ذات البنية الدقيقة.">
-          Widely used in microfabrication and microfluidic technologies, especially for precisely structured devices.
-        </p>
-      </div>
-
-      <div class="material">
-        <h3>POLYMERS</h3>
-        <p data-en="Polymeric materials can offer fabrication flexibility and are used in various microscale fluidic systems."
-           data-ar="توفر المواد البوليمرية مرونة في التصنيع وتستخدم في العديد من أنظمة الموائع الميكروسكوبية.">
-          Polymeric materials can offer fabrication flexibility and are used in various microscale fluidic systems.
-        </p>
-      </div>
-
-      <div class="material">
-        <h3>METALS / CERAMICS</h3>
-        <p data-en="Metals and ceramics can be selected when strength, temperature resistance or specific chemical compatibility is required."
-           data-ar="يمكن اختيار المعادن والسيراميك عند الحاجة إلى القوة أو مقاومة الحرارة أو توافق كيميائي محدد.">
-          Metals and ceramics can be selected when strength, temperature resistance or specific chemical compatibility is required.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-
-<!-- APPLICATIONS -->
-
-<section class="applications" id="applications">
-
-  <div class="container">
-
-    <div class="eyebrow" data-en="11 / APPLICATIONS" data-ar="11 / التطبيقات">
-      11 / APPLICATIONS
-    </div>
-
-    <h2 data-en="WHERE THE<br><span>CHIP GOES.</span>"
-        data-ar="أين تُستخدم<br><span>الشريحة؟</span>">
-      WHERE THE<br>
-      <span>CHIP GOES.</span>
-    </h2>
-
-    <div class="application-grid">
-
-      <div class="application">
-        <div class="number">01</div>
-        <h3 data-en="CHEMICAL INDUSTRY" data-ar="الصناعة الكيميائية">
-          CHEMICAL INDUSTRY
-        </h3>
-        <p data-en="Controlled microscale reaction environments for chemical process development."
-           data-ar="بيئات تفاعل ميكروسكوبية متحكم فيها لتطوير العمليات الكيميائية.">
-          Controlled microscale reaction environments for chemical process development.
-        </p>
-      </div>
-
-      <div class="application">
-        <div class="number">02</div>
-        <h3 data-en="PHARMACEUTICALS" data-ar="الصناعات الدوائية">
-          PHARMACEUTICALS
-        </h3>
-        <p data-en="Useful for reaction development, synthesis and process optimization."
-           data-ar="مفيدة لتطوير التفاعلات والتخليق وتحسين العمليات.">
-          Useful for reaction development, synthesis and process optimization.
-        </p>
-      </div>
-
-      <div class="application">
-        <div class="number">03</div>
-        <h3 data-en="ANALYTICAL CHEMISTRY" data-ar="الكيمياء التحليلية">
-          ANALYTICAL CHEMISTRY
-        </h3>
-        <p data-en="Small-scale controlled pathways can support analytical workflows."
-           data-ar="يمكن للمسارات الصغيرة المتحكم فيها دعم سير العمل التحليلي.">
-          Small-scale controlled pathways can support analytical workflows.
-        </p>
-      </div>
-
-      <div class="application">
-        <div class="number">04</div>
-        <h3 data-en="BIOCHEMICAL ANALYSIS" data-ar="التحليل الكيميائي الحيوي">
-          BIOCHEMICAL ANALYSIS
-        </h3>
-        <p data-en="Microscale fluid handling and controlled reaction environments."
-           data-ar="التعامل مع الموائع على نطاق صغير وبيئات التفاعل المتحكم فيها.">
-          Microscale fluid handling and controlled reaction environments.
-        </p>
-      </div>
-
-      <div class="application">
-        <div class="number">05</div>
-        <h3 data-en="HIGH-THROUGHPUT SYNTHESIS" data-ar="التخليق عالي الإنتاجية">
-          HIGH-THROUGHPUT SYNTHESIS
-        </h3>
-        <p data-en="Parallelized microscale systems can support rapid experimentation and screening."
-           data-ar="يمكن للأنظمة الميكروسكوبية المتوازية دعم التجارب والفحص السريع.">
-          Parallelized microscale systems can support rapid experimentation and screening.
-        </p>
-      </div>
-
-    </div>
-
-  </div>
-</section>
-
-
-<!-- MICROFLUIDICS -->
-
-<section class="distinction">
-
-  <div class="container">
-
-    <div class="eyebrow" data-en="12 / DON'T CONFUSE THEM" data-ar="12 / لا تخلط بينهما">
-      12 / DON'T CONFUSE THEM
-    </div>
-
-    <h2 data-en="MICROFLUIDICS<br><span>AND MICROREACTORS.</span>"
-        data-ar="الموائع الدقيقة<br><span>والمفاعلات الدقيقة.</span>">
-      MICROFLUIDICS<br>
-      <span>AND MICROREACTORS.</span>
-    </h2>
-
-    <p class="section-copy"
-       data-en="Microfluidics is a broader field concerned with manipulating small fluid volumes and flows. Microreactor technology focuses specifically on microscale reactor systems for controlled chemical reactions. A microreactor can therefore be implemented as a microfluidic reactor."
-       data-ar="الموائع الدقيقة مجال أوسع يهتم بالتعامل مع أحجام وتدفقات صغيرة من الموائع. أما تقنية المفاعلات الدقيقة فتركز تحديدًا على أنظمة المفاعلات الميكروسكوبية للتفاعلات الكيميائية المتحكم فيها. لذلك يمكن أن يكون المفاعل الدقيق أحد تطبيقات الموائع الدقيقة.">
-      Microfluidics is a broader field concerned with manipulating small fluid volumes and flows. Microreactor technology focuses specifically on microscale reactor systems for controlled chemical reactions. A microreactor can therefore be implemented as a microfluidic reactor.
-    </p>
-
-    <div class="distinction-grid">
-
-      <div class="concept-card">
-
-        <div class="mini-label">MICROFLUIDICS</div>
-
-        <h3 data-en="BROADER FIELD" data-ar="مجال أوسع">
-          BROADER FIELD
-        </h3>
-
-        <p data-en="Focuses on manipulating and controlling small volumes of fluids at microscale dimensions."
-           data-ar="يركز على التعامل مع أحجام صغيرة من الموائع والتحكم فيها على أبعاد ميكروسكوبية.">
-          Focuses on manipulating and controlling small volumes of fluids at microscale dimensions.
-        </p>
-
-        <ul>
-          <li data-en="FLUID MANIPULATION" data-ar="التعامل مع الموائع">FLUID MANIPULATION</li>
-          <li data-en="FLOW CONTROL" data-ar="التحكم في التدفق">FLOW CONTROL</li>
-          <li data-en="MICROSCALE SYSTEMS" data-ar="الأنظمة الميكروسكوبية">MICROSCALE SYSTEMS</li>
-        </ul>
-
-      </div>
-
-      <div class="concept-card active">
-
-        <div class="mini-label">MICROREACTOR TECHNOLOGY</div>
-
-        <h3 data-en="REACTION-FOCUSED" data-ar="يركز على التفاعل">
-          REACTION-FOCUSED
-        </h3>
-
-        <p data-en="Focuses on microscale reactor systems designed to control chemical reactions and process conditions."
-           data-ar="يركز على أنظمة المفاعلات الميكروسكوبية المصممة للتحكم في التفاعلات الكيميائية وظروف العملية.">
-          Focuses on microscale reactor systems designed to control chemical reactions and process conditions.
-        </p>
-
-        <ul>
-          <li data-en="CONTROLLED REACTIONS" data-ar="تفاعلات متحكم فيها">CONTROLLED REACTIONS</li>
-          <li data-en="MICROREACTOR CHIP" data-ar="شريحة مفاعل دقيق">MICROREACTOR CHIP</li>
-          <li data-en="PROCESS INTENSIFICATION" data-ar="تكثيف العملية">PROCESS INTENSIFICATION</li>
-        </ul>
-
-      </div>
-
-    </div>
-
-  </div>
+<div class="eyebrow">09 / SCALE</div>
+
+<h2>Microreactor vs conventional reactor</h2>
+
+</div>
+
+<div class="card compare">
+
+<table>
+
+<thead>
+
+<tr>
+<th>Feature</th>
+<th>Microreactor</th>
+<th>Conventional reactor</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>Characteristic dimensions</td>
+<td>Small channels / structures</td>
+<td>Typically larger reaction volume</td>
+</tr>
+
+<tr>
+<td>Mixing</td>
+<td>Strongly influenced by diffusion and geometry</td>
+<td>Can rely strongly on bulk mixing / agitation</td>
+</tr>
+
+<tr>
+<td>Heat transfer</td>
+<td>High surface-to-volume can support strong exchange</td>
+<td>Depends on reactor geometry and heat-transfer system</td>
+</tr>
+
+<tr>
+<td>Residence time</td>
+<td>Can be controlled through volume and flow</td>
+<td>Depends on reactor design and operation</td>
+</tr>
+
+<tr>
+<td>Scale strategy</td>
+<td>Often numbering-up / parallelization</td>
+<td>Often scale-up of vessel size</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
 </section>
 
 
 <!-- NUMBERING UP -->
+<section class="section">
 
-<section class="numbering">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="13 / NUMBERING-UP" data-ar="13 / زيادة السعة بالتوازي">
-      13 / NUMBERING-UP
-    </div>
+<div class="eyebrow">10 / NUMBERING-UP</div>
 
-    <h2 data-en="DON'T JUST<br><span>SCALE UP.</span>"
-        data-ar="لا تكبّر فقط.<br><span>شغّل بالتوازي.</span>">
-      DON'T JUST<br>
-      <span>SCALE UP.</span>
-    </h2>
+<h2>How do we produce more?</h2>
 
-    <div class="numbering-box">
+<p>
+Instead of simply making one microchannel much larger, production
+capacity can be increased by operating multiple channels or reactor
+modules in parallel.
+</p>
 
-      <p data-en="Instead of simply enlarging one microchannel, production capacity can be increased by operating multiple channels or reactor modules in parallel. This approach is commonly described as numbering-up or scale-out."
-         data-ar="بدلًا من تكبير قناة ميكروسكوبية واحدة فقط، يمكن زيادة الطاقة الإنتاجية من خلال تشغيل عدة قنوات أو وحدات مفاعل بالتوازي. ويُعرف هذا النهج عادةً باسم زيادة العدد بالتوازي أو التوسع الأفقي.">
-        Instead of simply enlarging one microchannel, production capacity can be increased by operating multiple channels or reactor modules in parallel. This approach is commonly described as numbering-up or scale-out.
-      </p>
+</div>
 
-      <div class="modules" id="modules">
+<div class="grid-2">
 
-        <div class="module"></div>
-        <div class="module"></div>
-        <div class="module"></div>
+<div class="card">
 
-      </div>
+<h3>ONE CHANNEL</h3>
 
-      <button class="btn primary"
-              onclick="addModule()"
-              style="position:absolute;right:40px;top:40px;"
-              data-en="ADD MODULE →"
-              data-ar="إضافة وحدة ←">
-        ADD MODULE →
-      </button>
+<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:7px;margin-top:20px">
 
-    </div>
+<div style="height:45px;background:rgba(77,225,193,.15);border:1px solid var(--accent);border-radius:8px"></div>
+<div style="height:45px;background:rgba(77,225,193,.15);border:1px solid var(--accent);border-radius:8px"></div>
+<div style="height:45px;background:rgba(77,225,193,.15);border:1px solid var(--accent);border-radius:8px"></div>
+<div style="height:45px;background:rgba(77,225,193,.15);border:1px solid var(--accent);border-radius:8px"></div>
 
-  </div>
+</div>
+
+</div>
+
+<div class="card">
+
+<h3>MULTIPLE CHANNELS</h3>
+
+<div style="display:grid;grid-template-columns:repeat(8,1fr);gap:5px;margin-top:20px">
+
+<script>
+for(let i=0;i<24;i++){
+document.write(
+'<div style="height:30px;background:rgba(99,164,255,.13);border:1px solid rgba(99,164,255,.5);border-radius:5px"></div>'
+);
+}
+</script>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="note">
+Numbering-up introduces its own engineering challenges, including
+flow distribution, fabrication, manifolding and maintaining similar
+operating conditions across parallel channels.
+</div>
+
+</div>
 </section>
 
 
-<!-- GLOSSARY -->
+<!-- APPLICATIONS -->
+<section class="section" id="applications">
 
-<section class="glossary">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="14 / GLOSSARY" data-ar="14 / المصطلحات">
-      14 / GLOSSARY
-    </div>
+<div class="eyebrow">11 / APPLICATIONS</div>
 
-    <h2 data-en="KNOW THE<br><span>LANGUAGE.</span>"
-        data-ar="افهم<br><span>المصطلحات.</span>">
-      KNOW THE<br>
-      <span>LANGUAGE.</span>
-    </h2>
+<h2>Where is MRT used?</h2>
 
-    <div class="glossary-grid">
+<p>
+Microreactors and microstructured reactors have been investigated
+across chemical synthesis, pharmaceuticals, biotechnology,
+nanoparticle production, catalysis and process intensification.
+</p>
 
-      <div class="glossary-item">
-        <div class="num">01</div>
-        <h3>Microreactor</h3>
-        <p data-en="A microscale reactor containing precisely defined channels or structures used to control fluid flow and chemical reactions."
-           data-ar="مفاعل ميكروسكوبي يحتوي على قنوات أو هياكل محددة بدقة للتحكم في تدفق الموائع والتفاعلات الكيميائية.">
-          A microscale reactor containing precisely defined channels or structures used to control fluid flow and chemical reactions.
-        </p>
-      </div>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">02</div>
-        <h3>Microchannel</h3>
-        <p data-en="A small engineered pathway through which fluids move inside the device."
-           data-ar="مسار صغير مصمم هندسيًا تتحرك من خلاله الموائع داخل الجهاز.">
-          A small engineered pathway through which fluids move inside the device.
-        </p>
-      </div>
+<div class="grid-3">
 
-      <div class="glossary-item">
-        <div class="num">03</div>
-        <h3>Micromixing</h3>
-        <p data-en="Mixing occurring within microscale pathways, where diffusion and fluid motion can strongly influence the mixing process."
-           data-ar="عملية خلط تحدث داخل المسارات الميكروسكوبية، حيث يمكن للانتشار وحركة المائع التأثير بشكل كبير في عملية الخلط.">
-          Mixing occurring within microscale pathways, where diffusion and fluid motion can strongly influence the mixing process.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">CHEMICAL</span>
+<h3>Organic synthesis</h3>
+<p>
+Controlled flow and heat transfer can be useful for continuous
+chemical synthesis.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">04</div>
-        <h3>Diffusion</h3>
-        <p data-en="Molecular transport caused by random molecular motion, generally from regions of higher concentration toward regions of lower concentration."
-           data-ar="انتقال جزيئي ناتج عن الحركة العشوائية للجزيئات، ويحدث عادةً من المناطق ذات التركيز الأعلى نحو المناطق ذات التركيز الأقل.">
-          Molecular transport caused by random molecular motion, generally from regions of higher concentration toward regions of lower concentration.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">PHARMA</span>
+<h3>Pharmaceutical chemistry</h3>
+<p>
+Microreactor approaches have been investigated for synthesis and
+process development.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">05</div>
-        <h3>Residence Time</h3>
-        <p data-en="The time material remains within a reactor. For a simple system, nominal residence time is related to reactor volume and volumetric flow rate by τ = V/Q."
-           data-ar="المدة التي تبقى فيها المادة داخل المفاعل. في النظام البسيط يرتبط زمن المكوث الاسمي بحجم المفاعل ومعدل التدفق الحجمي بالعلاقة τ = V/Q.">
-          The time material remains within a reactor. For a simple system, nominal residence time is related to reactor volume and volumetric flow rate by τ = V/Q.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">NANO</span>
+<h3>Nanoparticle synthesis</h3>
+<p>
+Micromixing can influence nucleation, growth and particle properties
+in suitable reaction systems.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">06</div>
-        <h3>Flow Rate</h3>
-        <p data-en="The volume of fluid passing through a specified point per unit time."
-           data-ar="حجم المائع الذي يمر عبر نقطة محددة خلال وحدة الزمن.">
-          The volume of fluid passing through a specified point per unit time.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">ENERGY</span>
+<h3>Catalysis</h3>
+<p>
+Microstructured reactors are investigated for catalytic processing
+and intensified reaction systems.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">07</div>
-        <h3>Heat Transfer</h3>
-        <p data-en="Transfer of thermal energy between regions of different temperature."
-           data-ar="انتقال الطاقة الحرارية بين مناطق ذات درجات حرارة مختلفة.">
-          Transfer of thermal energy between regions of different temperature.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">BIO</span>
+<h3>Biochemical processing</h3>
+<p>
+Microfluidic and microreactor platforms can provide controlled
+environments for selected biochemical processes.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">08</div>
-        <h3>Mass Transfer</h3>
-        <p data-en="Transport of chemical species from one location to another within or between phases."
-           data-ar="انتقال الأنواع الكيميائية من موقع إلى آخر داخل الطور أو بين الأطوار.">
-          Transport of chemical species from one location to another within or between phases.
-        </p>
-      </div>
+<div class="card">
+<span class="tag">PROCESS</span>
+<h3>Process intensification</h3>
+<p>
+Microreaction technology can integrate reaction and transport
+functions into compact systems.
+</p>
+</div>
 
-      <div class="glossary-item">
-        <div class="num">09</div>
-        <h3>Numbering-Up</h3>
-        <p data-en="Increasing production capacity by operating multiple microreactor channels or modules in parallel."
-           data-ar="زيادة الطاقة الإنتاجية من خلال تشغيل عدة قنوات أو وحدات مفاعل دقيق بالتوازي.">
-          Increasing production capacity by operating multiple microreactor channels or modules in parallel.
-        </p>
-      </div>
+</div>
 
-    </div>
+</div>
+</section>
 
-  </div>
+
+<!-- LIMITATIONS -->
+<section class="section">
+
+<div class="container">
+
+<div class="section-intro">
+
+<div class="eyebrow">12 / LIMITATIONS</div>
+
+<h2>Where does the technology struggle?</h2>
+
+<p>
+A scientific explanation should show limitations as well as
+advantages.
+</p>
+
+</div>
+
+<div class="grid-3">
+
+<div class="card">
+<h3>Pressure drop</h3>
+<p>
+Small channels can introduce significant hydraulic resistance,
+depending on geometry and operating conditions.
+</p>
+</div>
+
+<div class="card">
+<h3>Fouling / blockage</h3>
+<p>
+Deposits, particles or precipitates can be problematic in narrow
+channels.
+</p>
+</div>
+
+<div class="card">
+<h3>Fabrication</h3>
+<p>
+Complex microstructures may require specialized manufacturing and
+bonding processes.
+</p>
+</div>
+
+<div class="card">
+<h3>Scale-out</h3>
+<p>
+Parallelization requires careful flow distribution and consistent
+operation across channels.
+</p>
+</div>
+
+<div class="card">
+<h3>Material compatibility</h3>
+<p>
+The material must withstand the chemistry, temperature, pressure and
+other process conditions.
+</p>
+</div>
+
+<div class="card">
+<h3>Not universal</h3>
+<p>
+Microreactors are not automatically better for every reaction or
+process. Reactor selection depends on the specific application.
+</p>
+</div>
+
+</div>
+
+</div>
+</section>
+
+
+<!-- BIG PICTURE -->
+<section class="section">
+
+<div class="container">
+
+<div class="section-intro">
+
+<div class="eyebrow">13 / THE BIG PICTURE</div>
+
+<h2>Now connect everything.</h2>
+
+<p>
+A microreactor is an engineered system in which physical transport
+and chemical kinetics interact.
+</p>
+
+</div>
+
+<div class="map">
+
+<div class="map-node">GEOMETRY</div>
+<div class="map-node">FLOW</div>
+<div class="map-node">MATERIAL</div>
+
+<div class="map-node arrow-node">↓</div>
+<div class="map-node arrow-node">↓</div>
+<div class="map-node arrow-node">↓</div>
+
+<div class="map-node main">
+<strong>MICROREACTOR</strong>
+</div>
+
+<div class="map-node">MIXING</div>
+<div class="map-node">DIFFUSION</div>
+<div class="map-node">HEAT TRANSFER</div>
+
+<div class="map-node arrow-node">↓</div>
+<div class="map-node arrow-node">↓</div>
+<div class="map-node arrow-node">↓</div>
+
+<div class="map-node">REACTION KINETICS</div>
+<div class="map-node">RESIDENCE TIME</div>
+<div class="map-node">PRESSURE DROP</div>
+
+</div>
+
+<div class="card" style="margin-top:25px;text-align:center">
+
+<h3>
+A microreactor is not simply a smaller reactor.
+</h3>
+
+<p>
+It is a deliberately engineered reaction environment where
+<strong>flow, mixing, heat transfer, mass transfer, residence time
+and chemistry</strong> interact at small scales.
+</p>
+
+</div>
+
+</div>
 </section>
 
 
 <!-- REFERENCES -->
+<section class="section" id="references">
 
-<section class="references">
+<div class="container">
 
-  <div class="container">
+<div class="section-intro">
 
-    <div class="eyebrow" data-en="15 / REFERENCES" data-ar="15 / المراجع">
-      15 / REFERENCES
-    </div>
+<div class="eyebrow">14 / SCIENTIFIC REFERENCES</div>
 
-    <h2 data-en="SCIENCE<br><span>BEHIND THE VISUAL.</span>"
-        data-ar="العلم<br><span>خلف التصميم.</span>">
-      SCIENCE<br>
-      <span>BEHIND THE VISUAL.</span>
-    </h2>
+<h2>Built from scientific literature.</h2>
 
-    <div class="reference-list">
+<p>
+The educational content of this website is based on established
+microreaction and micromixing literature. Interactive numerical
+outputs are simplified educational models and should not be treated
+as experimental or CFD predictions.
+</p>
 
-      <div class="reference">
-        <div class="reference-number">01</div>
-        <div class="reference-text">
-          <strong>Ehrfeld, W., Hessel, V., & Löwe, H. (2000).</strong>
-          <br>
-          <em>Microreactors: New Technology for Modern Chemistry.</em>
-          Wiley-VCH.
-          DOI: 10.1002/3527601953
-        </div>
-      </div>
+</div>
 
-      <div class="reference">
-        <div class="reference-number">02</div>
-        <div class="reference-text">
-          <strong>Hessel, V., Löwe, H., & Schönfeld, F. (2005).</strong>
-          <br>
-          <em>Micromixers — a review on passive and active mixing principles.</em>
-          Chemical Engineering Science, 60(8–9), 2479–2501.
-          DOI: 10.1016/j.ces.2004.11.033
-        </div>
-      </div>
 
-      <div class="reference">
-        <div class="reference-number">03</div>
-        <div class="reference-text">
-          <strong>Bayareh, M., Alipour, F., Ghorbani Kharaji, Z., Sourani, S., Najafpour, A., & Bahrami, D. (2026).</strong>
-          <br>
-          <em>A critical review of micromixing dynamics in chemical microreactors.</em>
-          International Communications in Heat and Mass Transfer, 172, 110739.
-          DOI: 10.1016/j.icheatmasstransfer.2026.110739
-        </div>
-      </div>
+<a
+class="reference"
+href="https://doi.org/10.1002/3527601953"
+target="_blank"
+rel="noopener"
+>
 
-      <div class="reference">
-        <div class="reference-number">04</div>
-        <div class="reference-text">
-          <strong>Review of the applications of microreactors (2015).</strong>
-          <br>
-          Renewable and Sustainable Energy Reviews, 47, 519–539.
-          DOI: 10.1016/j.rser.2015.03.078
-        </div>
-      </div>
+<strong>
+Ehrfeld, W., Hessel, V., & Löwe, H. (2000)
+</strong>
 
-      <div class="reference">
-        <div class="reference-number">05</div>
-        <div class="reference-text">
-          <strong>Academic course / instructor material.</strong>
-          <br>
-          Specific edition, lecture or document should be added where applicable to the academic project.
-        </div>
-      </div>
+<span>
+Microreactors: New Technology for Modern Chemistry.
+Wiley-VCH. DOI: 10.1002/3527601953
+</span>
 
-    </div>
+</a>
 
-    <p class="material-note"
-       data-en="The numerical simulator values are illustrative. Scientific references should be checked against the exact sources used in the final academic submission."
-       data-ar="قيم المحاكي الرقمية توضيحية. يجب مراجعة المراجع العلمية ومطابقتها مع المصادر الفعلية المستخدمة في النسخة الأكاديمية النهائية.">
-      The numerical simulator values are illustrative. Scientific references should be checked against the exact sources used in the final academic submission.
-    </p>
 
-  </div>
+<a
+class="reference"
+href="https://doi.org/10.1016/j.ces.2004.11.033"
+target="_blank"
+rel="noopener"
+>
+
+<strong>
+Hessel, V., Löwe, H., & Schönfeld, F. (2005)
+</strong>
+
+<span>
+Micromixers — a review on passive and active mixing principles.
+Chemical Engineering Science, 60, 2479–2501.
+</span>
+
+</a>
+
+
+<a
+class="reference"
+href="https://doi.org/10.1016/j.icheatmasstransfer.2026.110739"
+target="_blank"
+rel="noopener"
+>
+
+<strong>
+Bayareh, M. et al. (2026)
+</strong>
+
+<span>
+A critical review of micromixing dynamics in chemical microreactors.
+International Communications in Heat and Mass Transfer, 172, 110739.
+</span>
+
+</a>
+
+
+<a
+class="reference"
+href="https://doi.org/10.1016/j.cep.2019.107771"
+target="_blank"
+rel="noopener"
+>
+
+<strong>
+Active and passive micromixers: A comprehensive review (2020)
+</strong>
+
+<span>
+Chemical Engineering and Processing: Process Intensification,
+147, 107771.
+</span>
+
+</a>
+
+
+<a
+class="reference"
+href="https://doi.org/10.1016/j.rser.2015.03.078"
+target="_blank"
+rel="noopener"
+>
+
+<strong>
+Review of the applications of microreactors (2015)
+</strong>
+
+<span>
+Renewable and Sustainable Energy Reviews, 47, 519–539.
+</span>
+
+</a>
+
+
+<a
+class="reference"
+href="https://doi.org/10.1016/j.jiec.2024.08.048"
+target="_blank"
+rel="noopener"
+>
+
+<strong>
+Lameu da Silva Jr. et al. (2025)
+</strong>
+
+<span>
+Microreactor technology applied to catalytic processing of Hydrogen:
+A review.
+Journal of Industrial and Engineering Chemistry, 143, 65–84.
+</span>
+
+</a>
+
+
+<div class="note">
+<b>Scientific integrity:</b>
+The simulator intentionally separates established physical equations
+from illustrative visual models. It does not claim to replace
+experimental measurements, CFD, validated kinetic models or process
+design software.
+</div>
+
+</div>
 </section>
 
 </main>
@@ -2846,18 +1923,19 @@ html[dir="rtl"] td{
 
 <footer>
 
-  <div class="container footer-inner">
+<div class="container">
 
-    <div>
-      <span class="footer-title">MICROREACTOR TECHNOLOGY / MRT</span>
-    </div>
+<strong>MRT•LAB</strong>
 
-    <div data-en="SMALL CHANNELS. POWERFUL CHEMISTRY."
-         data-ar="قنوات صغيرة. كيمياء دقيقة ومتحكم فيها.">
-      SMALL CHANNELS. POWERFUL CHEMISTRY.
-    </div>
+<p>
+Microreactor Technology — Interactive Scientific Learning Experience
+</p>
 
-  </div>
+<p style="font-size:.75rem">
+Educational project. Scientific references listed above.
+</p>
+
+</div>
 
 </footer>
 
@@ -2865,602 +1943,702 @@ html[dir="rtl"] td{
 <script>
 
 /* =========================================================
-   LANGUAGE
-========================================================= */
-
-let currentLang = "en";
-
-const langBtn = document.getElementById("langBtn");
-
-function updateLanguage(){
-
-  document.documentElement.lang = currentLang;
-  document.documentElement.dir = currentLang === "ar" ? "rtl" : "ltr";
-
-  document.querySelectorAll("[data-en][data-ar]").forEach(el => {
-
-    const value = el.getAttribute(`data-${currentLang}`);
-
-    if(value !== null){
-      el.innerHTML = value;
-    }
-
-  });
-
-  updatePartLanguage();
-}
-
-langBtn.addEventListener("click",()=>{
-
-  currentLang = currentLang === "en" ? "ar" : "en";
-
-  updateLanguage();
-
-});
-
-
-/* =========================================================
-   HEADER
-========================================================= */
-
-window.addEventListener("scroll",()=>{
-
-  const header = document.getElementById("header");
-
-  if(window.scrollY > 50){
-    header.classList.add("scrolled");
-  }else{
-    header.classList.remove("scrolled");
-  }
-
-});
-
-
-/* =========================================================
-   CHIP ANATOMY
-========================================================= */
-
-const parts = {
-
-  1:{
-    en:{
-      index:"01 / INLET",
-      title:"Reactant Inlet",
-      desc:"Fluids enter the microreactor through defined inlet ports before being guided into the microscale channel network.",
-      tags:["FLOW","INLET","CONTROL"]
-    },
-    ar:{
-      index:"01 / المدخل",
-      title:"مدخل المتفاعلات",
-      desc:"تدخل الموائع إلى المفاعل الدقيق عبر منافذ دخول محددة قبل توجيهها إلى شبكة القنوات الميكروسكوبية.",
-      tags:["التدفق","المدخل","التحكم"]
-    }
-  },
-
-  2:{
-    en:{
-      index:"02 / MICROCHANNEL",
-      title:"Microchannel",
-      desc:"The microchannel provides a defined pathway for fluid transport and reaction under controlled microscale conditions.",
-      tags:["CHANNEL","FLOW","MICROSCALE"]
-    },
-    ar:{
-      index:"02 / القناة الدقيقة",
-      title:"القناة الميكروسكوبية",
-      desc:"توفر القناة الدقيقة مسارًا محددًا لحركة الموائع والتفاعل تحت ظروف ميكروسكوبية متحكم فيها.",
-      tags:["قناة","تدفق","نطاق دقيق"]
-    }
-  },
-
-  3:{
-    en:{
-      index:"03 / MIXING ZONE",
-      title:"Mixing Zone",
-      desc:"Streams meet and mix. Short transport distances can make diffusion an important contributor to micromixing.",
-      tags:["MIXING","DIFFUSION","INTERFACE"]
-    },
-    ar:{
-      index:"03 / منطقة الخلط",
-      title:"منطقة الخلط",
-      desc:"تلتقي تيارات الموائع وتختلط. ويمكن لقِصر مسافات الانتقال أن يجعل الانتشار عاملًا مهمًا في الخلط الدقيق.",
-      tags:["خلط","انتشار","واجهة"]
-    }
-  },
-
-  4:{
-    en:{
-      index:"04 / REACTION ZONE",
-      title:"Reaction Zone",
-      desc:"Chemical conversion occurs within the controlled reaction environment. Temperature, flow and residence time can influence performance.",
-      tags:["REACTION","TEMPERATURE","CONTROL"]
-    },
-    ar:{
-      index:"04 / منطقة التفاعل",
-      title:"منطقة التفاعل",
-      desc:"يحدث التحول الكيميائي داخل بيئة التفاعل المتحكم فيها. ويمكن لدرجة الحرارة والتدفق وزمن المكوث التأثير في الأداء.",
-      tags:["تفاعل","حرارة","تحكم"]
-    }
-  },
-
-  5:{
-    en:{
-      index:"05 / OUTLET",
-      title:"Product Outlet",
-      desc:"The processed fluid exits through the outlet and can be collected, analyzed or directed to a downstream process.",
-      tags:["OUTLET","PRODUCT","DOWNSTREAM"]
-    },
-    ar:{
-      index:"05 / المخرج",
-      title:"مخرج الناتج",
-      desc:"يخرج المائع بعد المعالجة عبر المخرج، ويمكن جمعه أو تحليله أو توجيهه إلى عملية لاحقة.",
-      tags:["مخرج","ناتج","عملية لاحقة"]
-    }
-  }
-
-};
-
-function showPart(number){
-
-  document.querySelectorAll(".hotspot").forEach(btn=>{
-    btn.classList.remove("active");
-  });
-
-  const selected = document.querySelector(`.hs${number}`);
-
-  if(selected){
-    selected.classList.add("active");
-  }
-
-  const part = parts[number][currentLang];
-
-  document.getElementById("partIndex").textContent = part.index;
-  document.getElementById("partTitle").textContent = part.title;
-  document.getElementById("partDesc").textContent = part.desc;
-
-  document.getElementById("partTags").innerHTML =
-    part.tags.map(tag=>`<div class="tag">${tag}</div>`).join("");
-}
-
-function updatePartLanguage(){
-
-  const active = document.querySelector(".hotspot.active");
-
-  if(active){
-
-    const number = active.className.match(/hs(\d)/);
-
-    if(number){
-      showPart(Number(number[1]));
-    }
-
-  }
-
-}
-
-showPart(1);
-
-
-/* =========================================================
-   ZOOM SCROLL
-========================================================= */
-
-window.addEventListener("scroll",()=>{
-
-  const section = document.querySelector(".zoom-section");
-  const visual = document.getElementById("zoomVisual");
-
-  if(!section || !visual) return;
-
-  const rect = section.getBoundingClientRect();
-
-  const progress = Math.min(
-    1,
-    Math.max(
-      0,
-      (window.innerHeight - rect.top) /
-      (rect.height + window.innerHeight)
-    )
-  );
-
-  const scale = 1 + progress * 2.3;
-
-  visual.style.transform = `scale(${scale})`;
-
-  const zoomLabel = document.getElementById("zoomLabel");
-  const zoomTitle = document.getElementById("zoomTitle");
-
-  if(progress < .33){
-
-    zoomLabel.textContent =
-      currentLang === "ar" ? "مستوى الشريحة" : "CHIP SCALE";
-
-    zoomTitle.textContent =
-      currentLang === "ar" ? "المفاعل الدقيق" : "MICROREACTOR";
-
-  }else if(progress < .66){
-
-    zoomLabel.textContent =
-      currentLang === "ar" ? "مستوى القناة" : "CHANNEL SCALE";
-
-    zoomTitle.textContent =
-      currentLang === "ar" ? "القناة الدقيقة" : "MICROCHANNEL";
-
-  }else{
-
-    zoomLabel.textContent =
-      currentLang === "ar" ? "مستوى الجزيئات" : "MOLECULAR SCALE";
-
-    zoomTitle.textContent =
-      currentLang === "ar" ? "الانتشار والخلط" : "DIFFUSION + MIXING";
-
-  }
-
-});
-
-
-/* =========================================================
-   DIFFUSION VISUALIZATION
-========================================================= */
-
-function createDiffusionParticles(){
-
-  const box = document.getElementById("diffusionBox");
-
-  if(!box) return;
-
-  box.querySelectorAll(".diff-particle").forEach(p=>p.remove());
-
-  for(let i=0;i<18;i++){
-
-    const particle = document.createElement("div");
-
-    particle.className =
-      "diff-particle " + (i < 9 ? "a" : "b");
-
-    const x = i < 9
-      ? 15 + Math.random()*25
-      : 60 + Math.random()*25;
-
-    const y = 15 + Math.random()*70;
-
-    particle.style.left = x + "%";
-    particle.style.top = y + "%";
-
-    box.appendChild(particle);
-
-  }
-
-}
-
-function runDiffusion(){
-
-  const particles =
-    document.querySelectorAll("#diffusionBox .diff-particle");
-
-  particles.forEach((particle,index)=>{
-
-    const targetX =
-      43 + Math.random()*14;
-
-    const targetY =
-      15 + Math.random()*70;
-
-    setTimeout(()=>{
-
-      particle.style.left = targetX + "%";
-      particle.style.top = targetY + "%";
-
-    },index*70);
-
-  });
-
-}
-
-createDiffusionParticles();
-
-
-/* =========================================================
-   SIMULATOR
-========================================================= */
-
-const flowSlider =
-  document.getElementById("flowSlider");
-
-const tempSlider =
-  document.getElementById("tempSlider");
-
-const flowValue =
-  document.getElementById("flowValue");
-
-const tempValue =
-  document.getElementById("tempValue");
-
-const residence =
-  document.getElementById("residence");
-
-const simScreen =
-  document.getElementById("simScreen");
-
-const status =
-  document.getElementById("status");
+   MICROREACTOR INTERACTIVE SIMULATION
+   ========================================================= */
+
+const canvas = document.getElementById("reactorCanvas");
+const ctx = canvas.getContext("2d");
+
+const flowSlider = document.getElementById("flow");
+const widthSlider = document.getElementById("width");
+const tempSlider = document.getElementById("temperature");
+const rateSlider = document.getElementById("rate");
+
+const flowValue = document.getElementById("flowValue");
+const widthValue = document.getElementById("widthValue");
+const tempValue = document.getElementById("tempValue");
+const rateValue = document.getElementById("rateValue");
+
+const residenceEl = document.getElementById("residence");
+const reynoldsEl = document.getElementById("reynolds");
+const mixingEl = document.getElementById("mixing");
+const rateOutput = document.getElementById("rateOutput");
+
+const runBtn = document.getElementById("runBtn");
+const resetBtn = document.getElementById("resetBtn");
+
+let running = true;
+let particles = [];
+let animationId = null;
+
+const reactionVolume_uL = 35;
 
 /*
-  Residence time:
+  Educational reference properties.
 
-  τ = V / Q
-
-  V = 35 µL
-  Q = flow mL/min
-
-  Convert Q to µL/min:
-
-  Q(µL/min) = Q(mL/min) × 1000
-
-  τ(min) = 35 / (Q × 1000)
-
-  τ(s) = τ(min) × 60
-
-  Therefore:
-
-  τ(s) = 2.1 / Q(mL/min)
-
-  At 1.0 mL/min:
-  τ = 2.1 seconds.
+  These values approximate water-like conditions for visualization.
+  They are NOT universal properties for every fluid.
 */
+const rho = 998;        // kg/m3
+const mu = 0.001;       // Pa.s
 
-function updateSimulator(){
+function resizeCanvas(){
 
-  const flow =
-    Number(flowSlider.value);
+  const rect = canvas.getBoundingClientRect();
 
-  const temp =
-    Number(tempSlider.value);
+  const dpr = Math.min(window.devicePixelRatio || 1,2);
 
-  const reactionVolume_uL = 35;
+  canvas.width = rect.width * dpr;
+  canvas.height = rect.height * dpr;
 
-  const residenceTime =
-    (reactionVolume_uL / (flow * 1000)) * 60;
-
-  flowValue.textContent =
-    flow.toFixed(1) + " mL/min";
-
-  tempValue.textContent =
-    temp + " °C";
-
-  residence.textContent =
-    residenceTime.toFixed(2) + " s";
-
-  updateParticles(flow,temp);
-
+  ctx.setTransform(dpr,0,0,dpr,0,0);
 }
 
-flowSlider.addEventListener(
-  "input",
-  updateSimulator
-);
+window.addEventListener("resize",resizeCanvas);
 
-tempSlider.addEventListener(
-  "input",
-  updateSimulator
-);
+resizeCanvas();
 
-function updateParticles(flow,temp){
 
-  const existing =
-    simScreen.querySelectorAll(".sim-p");
+/* =========================================================
+   PARTICLES
+   ========================================================= */
 
-  existing.forEach(p=>p.remove());
+function createParticles(){
 
-  const count =
-    Math.max(8,Math.min(35,Math.round(flow*7)));
+  particles = [];
+
+  const count = 130;
 
   for(let i=0;i<count;i++){
 
-    const p =
-      document.createElement("div");
+    const type = i % 2 === 0 ? "A" : "B";
 
-    p.className = "sim-p";
+    particles.push({
 
-    p.style.left =
-      (10 + Math.random()*80) + "%";
+      x: type === "A"
+        ? Math.random()*0.28
+        : Math.random()*0.28,
 
-    p.style.top =
-      (calcParticleY()) + "%";
+      y: type === "A"
+        ? 0.43 + (Math.random()-.5)*0.16
+        : 0.57 + (Math.random()-.5)*0.16,
 
-    const green =
-      i % 2 === 0;
+      type:type,
 
-    p.style.background =
-      green ? "var(--green)" : "var(--cyan)";
+      reacted:false,
 
-    p.style.boxShadow =
-      `0 0 12px ${green ? "var(--green)" : "var(--cyan)"}`;
+      size:2.4 + Math.random()*1.5
 
-    const duration =
-      Math.max(.8,3.5/flow);
-
-    p.style.animation =
-      `simFlow ${duration}s linear ${Math.random()*2}s infinite`;
-
-    simScreen.appendChild(p);
-
-  }
-
-}
-
-function calcParticleY(){
-
-  return 47 + Math.random()*6;
-
-}
-
-
-/* simulator particle animation */
-
-const simStyle =
-document.createElement("style");
-
-simStyle.textContent = `
-
-@keyframes simFlow{
-
-  0%{
-    transform:translateX(0);
-    opacity:0;
-  }
-
-  10%{
-    opacity:1;
-  }
-
-  80%{
-    opacity:1;
-  }
-
-  100%{
-    transform:translateX(500px);
-    opacity:0;
-  }
-
-}
-
-`;
-
-document.head.appendChild(simStyle);
-
-
-let running = false;
-
-function runReaction(){
-
-  running = true;
-
-  status.textContent =
-    currentLang === "ar"
-      ? "التفاعل يعمل"
-      : "REACTION RUNNING";
-
-  simScreen.style.boxShadow =
-    "inset 0 0 100px rgba(120,230,161,.06)";
-
-  updateParticles(
-    Number(flowSlider.value),
-    Number(tempSlider.value)
-  );
-
-}
-
-function pauseReaction(){
-
-  running = false;
-
-  status.textContent =
-    currentLang === "ar"
-      ? "متوقف مؤقتًا"
-      : "PAUSED";
-
-  simScreen
-    .querySelectorAll(".sim-p")
-    .forEach(p=>{
-      p.style.animationPlayState = "paused";
     });
 
-}
-
-function resetReaction(){
-
-  running = false;
-
-  flowSlider.value = 1;
-  tempSlider.value = 25;
-
-  status.textContent =
-    currentLang === "ar"
-      ? "جاهز"
-      : "READY";
-
-  simScreen.style.boxShadow = "none";
-
-  updateSimulator();
+  }
 
 }
 
-updateSimulator();
+createParticles();
 
 
-/* =========================================================
-   NUMBERING-UP
-========================================================= */
+function updateParticles(){
 
-function addModule(){
+  const flow = Number(flowSlider.value);
+  const width = Number(widthSlider.value);
+  const rate = Number(rateSlider.value);
+  const temperature = Number(tempSlider.value);
 
-  const modules =
-    document.getElementById("modules");
+  /*
+    Visualization speed.
+    This is intentionally normalized rather than a physical
+    velocity field.
+  */
 
-  const module =
-    document.createElement("div");
+  const speed = 0.0015 + flow*0.0007;
 
-  module.className = "module";
+  particles.forEach(p=>{
 
-  module.style.opacity = "0";
-  module.style.transform = "scale(.7)";
+    if(!running) return;
 
-  modules.appendChild(module);
+    p.x += speed;
 
-  requestAnimationFrame(()=>{
+    /*
+      Gentle diffusion-like transverse movement.
+      This is a visual representation, not a stochastic
+      solution of the diffusion equation.
+    */
 
-    module.style.transition = ".5s";
-    module.style.opacity = "1";
-    module.style.transform = "scale(1)";
+    const diffusion = 0.0015 *
+      (500 / width) *
+      (1 + Math.abs(Math.sin(p.x*25)));
+
+    if(p.x > 0.20){
+
+      p.y +=
+        (0.5-p.y)*0.006 +
+        (Math.random()-.5)*diffusion;
+
+    }
+
+    /*
+      Educational reaction zone.
+
+      The chance of conversion increases with:
+      - reaction rate factor
+      - temperature
+      - local mixing
+    */
+
+    const localMix =
+      Math.max(0,1-Math.abs(p.y-.5)/.18);
+
+    const tempFactor =
+      Math.exp(
+        -5000/temperature +
+        5000/298
+      );
+
+    const probability =
+      0.0008 *
+      rate *
+      tempFactor *
+      localMix;
+
+    if(
+      !p.reacted &&
+      p.x > 0.35 &&
+      p.x < 0.82 &&
+      Math.random() < probability
+    ){
+
+      p.reacted = true;
+      p.type = "C";
+
+    }
+
+    if(p.x > 1.05){
+
+      p.x = 0.01;
+
+      p.y =
+        p.type === "A"
+          ? 0.43 + (Math.random()-.5)*0.16
+          : p.type === "B"
+            ? 0.57 + (Math.random()-.5)*0.16
+            : 0.5 + (Math.random()-.5)*0.12;
+
+      p.reacted = false;
+
+      if(Math.random()<.5){
+        p.type = Math.random()<.5 ? "A":"B";
+      }
+
+    }
 
   });
 
 }
 
 
+function drawChannel(){
+
+  const w = canvas.clientWidth;
+  const h = canvas.clientHeight;
+
+  ctx.clearRect(0,0,w,h);
+
+  /*
+    Background
+  */
+
+  ctx.fillStyle="#06101b";
+  ctx.fillRect(0,0,w,h);
+
+  /*
+    Reaction channel
+  */
+
+  const left = w*.06;
+  const right = w*.94;
+
+  const y = h*.38;
+  const channelH = h*.24;
+
+  ctx.beginPath();
+
+  ctx.roundRect(
+    left,
+    y,
+    right-left,
+    channelH,
+    channelH/2
+  );
+
+  const gradient =
+    ctx.createLinearGradient(left,0,right,0);
+
+  gradient.addColorStop(0,"rgba(70,130,200,.12)");
+  gradient.addColorStop(.35,"rgba(90,150,220,.10)");
+  gradient.addColorStop(.65,"rgba(77,225,193,.12)");
+  gradient.addColorStop(1,"rgba(77,225,193,.17)");
+
+  ctx.fillStyle=gradient;
+  ctx.fill();
+
+  ctx.strokeStyle="rgba(77,225,193,.55)";
+  ctx.lineWidth=2;
+  ctx.stroke();
+
+  /*
+    Reaction zone
+  */
+
+  ctx.fillStyle="rgba(77,225,193,.045)";
+
+  ctx.fillRect(
+    w*.35,
+    y,
+    w*.47,
+    channelH
+  );
+
+  ctx.fillStyle="rgba(255,255,255,.55)";
+  ctx.font="700 11px system-ui";
+  ctx.textAlign="center";
+
+  ctx.fillText(
+    "MIXING + REACTION ZONE",
+    w*.585,
+    y-12
+  );
+
+  /*
+    inlet / outlet labels
+  */
+
+  ctx.textAlign="left";
+
+  ctx.fillStyle="#65a4ff";
+
+  ctx.fillText(
+    "A",
+    left,
+    y+channelH+25
+  );
+
+  ctx.fillStyle="#ff9b66";
+
+  ctx.fillText(
+    "B",
+    left+25,
+    y+channelH+25
+  );
+
+  ctx.textAlign="right";
+
+  ctx.fillStyle="#4de1c1";
+
+  ctx.fillText(
+    "PRODUCT",
+    right,
+    y+channelH+25
+  );
+
+
+  /*
+    Particles
+  */
+
+  particles.forEach(p=>{
+
+    let color;
+
+    if(p.type==="A") color="#65a4ff";
+    else if(p.type==="B") color="#ff9b66";
+    else color="#4de1c1";
+
+    ctx.beginPath();
+
+    ctx.arc(
+      left+p.x*(right-left),
+      y+channelH*p.y,
+      p.size,
+      0,
+      Math.PI*2
+    );
+
+    ctx.fillStyle=color;
+    ctx.fill();
+
+  });
+
+}
+
+
+function animate(){
+
+  updateParticles();
+  drawChannel();
+
+  animationId=requestAnimationFrame(animate);
+
+}
+
+animate();
+
+
 /* =========================================================
-   INTERSECTION ANIMATIONS
-========================================================= */
+   CALCULATIONS
+   ========================================================= */
 
-const observer =
-new IntersectionObserver(
-  entries=>{
+function updateSimulation(){
 
-    entries.forEach(entry=>{
+  const flow = Number(flowSlider.value);
+  const width = Number(widthSlider.value);
+  const temperature = Number(tempSlider.value);
+  const rate = Number(rateSlider.value);
 
-      if(entry.isIntersecting){
+  flowValue.textContent =
+    flow.toFixed(2)+" mL/min";
 
-        entry.target.style.opacity = "1";
-        entry.target.style.transform = "translateY(0)";
+  widthValue.textContent =
+    width+" µm";
 
-      }
+  tempValue.textContent =
+    temperature+" K";
 
-    });
+  rateValue.textContent =
+    rate.toFixed(1)+"×";
 
-  },
-  {
-    threshold:.08
-  }
-);
+  /*
+    Residence time
 
-document.querySelectorAll(
-  ".process-card,.green-card,.material,.application,.glossary-item,.parameter,.concept-card,.transfer-card"
-).forEach(el=>{
+    V = 35 µL
+    Q = flow mL/min = flow*1000 µL/min
 
-  el.style.opacity = "0";
-  el.style.transform = "translateY(25px)";
-  el.style.transition = "opacity .7s ease, transform .7s ease";
+    τ(min) = V/Q
+    τ(s) = V/Q * 60
+  */
 
-  observer.observe(el);
+  const residenceTime =
+    (reactionVolume_uL/(flow*1000))*60;
+
+  residenceEl.textContent =
+    residenceTime.toFixed(2)+" s";
+
+
+  /*
+    Simplified hydraulic calculation.
+
+    Channel treated as square for educational estimate.
+
+    Q m3/s
+    A = w²
+    u = Q/A
+    Dh ≈ w
+
+    Re = rho*u*Dh/mu
+  */
+
+  const Q =
+    flow*1e-6/60;
+
+  const w =
+    width*1e-6;
+
+  const area =
+    w*w;
+
+  const velocity =
+    Q/area;
+
+  const Re =
+    rho*velocity*w/mu;
+
+  reynoldsEl.textContent =
+    Math.max(0,Re).toFixed(2);
+
+
+  /*
+    Educational mixing indicator.
+
+    Smaller width and lower flow increase the displayed
+    mixing tendency in this simplified visualization.
+  */
+
+  const mixing =
+    100 *
+    (1-Math.exp(
+      -1.2 *
+      (500/width) *
+      (1/flow)
+    ));
+
+  mixingEl.textContent =
+    Math.min(99,Math.max(0,mixing)).toFixed(0)+"%";
+
+
+  /*
+    Temperature-sensitive illustrative rate factor.
+
+    This is not a fitted chemical kinetic model.
+  */
+
+  const tempFactor =
+    Math.exp(
+      -5000/temperature +
+      5000/298
+    );
+
+  rateOutput.textContent =
+    (rate*tempFactor).toFixed(2)+"×";
+
+}
+
+
+[
+  flowSlider,
+  widthSlider,
+  tempSlider,
+  rateSlider
+].forEach(el=>{
+  el.addEventListener("input",updateSimulation);
+});
+
+updateSimulation();
+
+
+/* =========================================================
+   PLAY / PAUSE
+   ========================================================= */
+
+runBtn.addEventListener("click",()=>{
+
+  running=!running;
+
+  runBtn.textContent =
+    running
+      ? "❚❚ PAUSE"
+      : "▶ RUN";
+
+});
+
+
+resetBtn.addEventListener("click",()=>{
+
+  flowSlider.value=1;
+  widthSlider.value=500;
+  tempSlider.value=298;
+  rateSlider.value=1;
+
+  createParticles();
+  updateSimulation();
+
+  running=true;
+
+  runBtn.textContent="❚❚ PAUSE";
 
 });
 
 
 /* =========================================================
-   INITIAL LANGUAGE
-========================================================= */
+   LEARNING TIMELINE
+   ========================================================= */
 
-updateLanguage();
+const stages = [
+
+{
+title:"01 — Molecules enter",
+text:
+"Reactant streams enter the microreactor through one or more inlet channels. Their behavior depends on reactor geometry, flow rate, fluid properties and operating conditions."
+},
+
+{
+title:"02 — Mixing",
+text:
+"Two streams come into contact. In many microscale systems, mixing is strongly influenced by molecular diffusion and by the geometry of the mixer. Passive and active micromixers use different strategies to enhance mixing."
+},
+
+{
+title:"03 — Diffusion",
+text:
+"Molecules move from regions of higher concentration toward lower concentration through molecular diffusion. Shorter characteristic distances can reduce the distance over which diffusion must act."
+},
+
+{
+title:"04 — Reaction",
+text:
+"Once reactants occupy the appropriate local environment, chemical reaction occurs according to the reaction mechanism and kinetic parameters of the specific chemistry."
+},
+
+{
+title:"05 — Product exits",
+text:
+"The resulting mixture leaves the reactor. Product concentration, conversion, selectivity, temperature and other performance metrics can then be measured."
+}
+
+];
+
+const stageButtons =
+document.querySelectorAll(".stage");
+
+const stageContent =
+document.getElementById("stageContent");
+
+stageButtons.forEach(button=>{
+
+  button.addEventListener("click",()=>{
+
+    stageButtons.forEach(b=>
+      b.classList.remove("active")
+    );
+
+    button.classList.add("active");
+
+    const index =
+      Number(button.dataset.stage);
+
+    stageContent.innerHTML=`
+
+      <h3>${stages[index].title}</h3>
+
+      <p>
+      ${stages[index].text}
+      </p>
+
+    `;
+
+  });
+
+});
+
+
+/* =========================================================
+   HEAT VISUALIZATION
+   ========================================================= */
+
+const heatSlider =
+document.getElementById("heatSlider");
+
+const heatMap =
+document.getElementById("heatMap");
+
+const thermalText =
+document.getElementById("thermalText");
+
+function updateHeat(){
+
+  const T =
+    Number(heatSlider.value);
+
+  const normalized =
+    (T-273)/(373-273);
+
+  const r =
+    Math.round(25+220*normalized);
+
+  const g =
+    Math.round(60+70*(1-normalized));
+
+  const b =
+    Math.round(120*(1-normalized)+25);
+
+  heatMap.style.background =
+    `
+    linear-gradient(
+      90deg,
+      rgb(18,${g},${b}),
+      rgb(${Math.round(r*.65)},${Math.round(g*.7)},${Math.round(b*.5)}),
+      rgb(${r},${Math.round(g*.45)},${Math.round(b*.25)})
+    )
+    `;
+
+  if(T<290){
+    thermalText.textContent="COOL";
+  }
+  else if(T<320){
+    thermalText.textContent="MILD";
+  }
+  else if(T<350){
+    thermalText.textContent="WARM";
+  }
+  else{
+    thermalText.textContent="HOT";
+  }
+
+}
+
+heatSlider.addEventListener(
+  "input",
+  updateHeat
+);
+
+updateHeat();
+
+
+/* =========================================================
+   PRESSURE DROP INDICATOR
+   ========================================================= */
+
+const pressureWidth =
+document.getElementById("pressureWidth");
+
+const pressureValue =
+document.getElementById("pressureValue");
+
+function updatePressure(){
+
+  const w =
+    Number(pressureWidth.value);
+
+  /*
+    Relative indicator only.
+    For a fixed-flow laminar rectangular/square channel,
+    hydraulic resistance can increase strongly as characteristic
+    dimensions decrease.
+
+    This is deliberately shown as relative rather than Pa because
+    exact pressure drop requires validated geometry and fluid data.
+  */
+
+  const relative =
+    Math.pow(500/w,4);
+
+  pressureValue.textContent =
+    relative.toFixed(2)+"×";
+
+}
+
+pressureWidth.addEventListener(
+  "input",
+  updatePressure
+);
+
+updatePressure();
+
+
+/* =========================================================
+   ACCESSIBILITY / REDUCED MOTION
+   ========================================================= */
+
+const reducedMotion =
+window.matchMedia(
+  "(prefers-reduced-motion: reduce)"
+).matches;
+
+if(reducedMotion){
+
+  running=false;
+
+  runBtn.textContent="▶ RUN";
+
+}
+
+
+/* =========================================================
+   INITIAL STATE
+   ========================================================= */
+
+updateSimulation();
+updateHeat();
+updatePressure();
 
 </script>
 
